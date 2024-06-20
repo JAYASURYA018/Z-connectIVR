@@ -92,16 +92,28 @@ function App() {
       const targetNode = prevNodes.find((node) => node.id === params.target);
       setLastData((prevNodes) => prevNodes.map(node => {
         if (sourceNode.hasOwnProperty('parentId')) {
-          const optionNum = sourceNode.id.substring(sourceNode.id.length, sourceNode.id.length - 1)
-          return node.source === sourceNode.parentId
-            ? {
-              ...node,
-              optionsTarget: {
-                ...node.optionsTarget,
-                [optionNum]: targetNode.data.label
+          if (sourceNode.data.label === 'No' || sourceNode.data.label === 'Yes') {
+            return node.source === sourceNode.parentId
+              ? {
+                ...node,
+                decisionTarget: {
+                  ...node.decisionTarget,
+                  [sourceNode.data.label]: targetNode.data.label
+                }
               }
-            }
-            : node;
+              : node;
+          } else {
+            const optionNum = sourceNode.id.substring(sourceNode.id.length, sourceNode.id.length - 1)
+            return node.source === sourceNode.parentId
+              ? {
+                ...node,
+                optionsTarget: {
+                  ...node.optionsTarget,
+                  [optionNum]: targetNode.data.label
+                }
+              }
+              : node;
+          }
         } else {
           return node.source === sourceNode.id
             ? { ...node, target: targetNode.data.label }
@@ -211,6 +223,13 @@ function App() {
           draggable: false,
         }));
         setNodes((nds) => nds.concat(newChildNodes));
+        setLastData((prevNodes) => [
+          ...prevNodes, {
+            source: newNode.id,
+            sourceLabel: newNode.data.label,
+            nodeType: nodeProps.nodeLabel
+          }
+        ])
         console.log("nodes from onDrop", nodes);
       } else {
 
