@@ -93,7 +93,6 @@ function App() {
       setLastData((prevNodes) => prevNodes.map(node => {
         if (sourceNode.hasOwnProperty('parentId')) {
           if (sourceNode.data.label === 'No' || sourceNode.data.label === 'Yes') {
-            console.log("desicion node");
             return node.source === sourceNode.parentId
               ? {
                 ...node,
