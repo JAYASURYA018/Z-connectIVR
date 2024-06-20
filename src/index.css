@@ -1,0 +1,443 @@
+.react-flow__node {
+  box-shadow: none !important;
+}
+
+body {
+  font-family: "Schibsted Grotesk", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.sidebar-container {
+  grid-row: span 2 !important;
+}
+
+.Toastify {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1;
+}
+
+/* 
+.Savebtn {
+  background-color: yellowgreen;
+} */
+
+/* .savebtn {
+  margin-top: 50px;
+  margin-left: 50px
+} */
+.PopupButtons {
+  margin-top: 70px
+}
+
+.FlownamePopup {
+  margin-left: 10px;
+  font-weight: 700;
+}
+
+.Deploybtn:enabled {
+  background-color: #198754;
+  color: white;
+  cursor: pointer;
+}
+
+
+.Deploybtn:disabled {
+  background-color: #cccccc;
+  color: #666666;
+  cursor: not-allowed;
+}
+
+.Deploybtn {
+  background-color: #198754;
+  margin-left: 10px;
+  color: white;
+  /* height: 30px; */
+  font-size: 14px;
+  border: none;
+  padding: 8px 16px;
+  font-weight: 500;
+  border-radius: 5px;
+}
+
+.InputPOPup {
+  /* height: 25px;
+  width: 200px;
+  margin-top: 10px; */
+  margin-left: 10px;
+  color: #333333;
+  border: 1px solid #e6e6e6;
+  box-shadow: inset 2px 2px 3px hsla(0, 0%, 87%, .3);
+  height: 18px;
+  margin-top: 5px;
+  padding: 6px 12px;
+  background-color: #fff;
+  border-radius: 0;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+  /* transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out; */
+  display: block;
+  font-size: 14px;
+  line-height: 1.42857143;
+  color: #222;
+}
+
+.SavePopup {
+  height: 200px;
+  width: 300px;
+
+  position: absolute;
+  background-color: #FFFFFF;
+  z-index: 10;
+  left: 350px;
+  top: 210px;
+  border-radius: 8px;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: 35vh 3fr 35vh;
+  grid-template-rows: 100vh;
+  gap: 5px;
+  background-color: #2196F3;
+  padding: 5px;
+  height: 98vh;
+  box-sizing: border-box;
+}
+
+.Element-conf-container {
+  background-color: cadetblue;
+  padding: 10px;
+  grid-column: 3 / 4;
+  height: 94vh;
+}
+
+.sidebar-Navigator,
+.sidebar-Elements {
+  padding: 10px;
+  background-color: #f6f6f6;
+  overflow-y: auto;
+  margin-bottom: 5px;
+  box-sizing: border-box;
+}
+
+.sidebar-Navigator {
+  height: 50vh;
+  background-color: #f6f6f6;
+  border: 1px solid black;
+  border-radius: 6px;
+}
+
+.sidebar-Elements {
+  height: 45.7vh;
+  border: 1px solid black;
+  background-color: #f6f6f6;
+  border-radius: 6px;
+}
+
+.StartIcon {
+  height: 15px;
+  padding-right: 2px;
+}
+
+.MenuIcon {
+  height: 16px;
+  padding-right: 4px;
+}
+
+.AudioIcon {
+  height: 17px;
+  padding-right: 4px;
+}
+
+.HangupIcon {
+  height: 13px;
+  padding-right: 3px;
+}
+
+body .main-content {
+  background-color: #f0f0f0;
+  padding: 8px;
+  overflow-y: auto;
+  grid-column: 2 / 3;
+  height: 94vh;
+  border: 1px solid black;
+  border-radius: 6px;
+}
+
+body .main-content::-webkit-scrollbar {
+  width: 20px;
+}
+
+body .main-content::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  border-radius: 10px;
+  background: #f0f0f0;
+}
+
+body .main-content::-webkit-scrollbar-thumb {
+  background: red;
+  border-radius: 10px;
+}
+
+
+h3 {
+  margin-top: 0;
+}
+
+.dndflow {
+  flex-direction: column;
+  display: flex;
+  flex-grow: 1;
+  width: 100%;
+  height: 100vh;
+}
+
+.dndflow aside {
+  border-right: 1px solid #eee;
+  padding: 15px 10px;
+  font-size: 12px;
+  background: #fcfcfc;
+}
+
+.Nodename,
+.Texttosay {
+  color: #666;
+  font-size: 12px;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-top: 4px;
+}
+
+.InputboxFORID,
+.Inputbox,
+.TexttosayInputbox {
+  border: 1px solid #e6e6e6;
+  box-shadow: inset 2px 2px 3px hsla(0, 0%, 87%, .3);
+  height: 18px;
+  margin-top: 5px;
+  padding: 6px 12px;
+  background-color: #fff;
+  border-radius: 0;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+  /* transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out; */
+  display: block;
+  font-size: 14px;
+  line-height: 1.42857143;
+  color: #222;
+  margin-bottom: 5px;
+}
+
+.TexttosayInputbox {
+  height: 30px;
+}
+
+.AudioUploadInput {
+  color: #666;
+  height: 18px;
+  margin-top: 5px;
+  padding: 6px 2px;
+  width: 199px;
+  border-radius: 0;
+  display: block;
+  font-size: 14px;
+  line-height: 1.42857143;
+}
+
+.Selectednode {
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.ChannelDropdown {
+  color: #666;
+  font-size: 12px;
+  font-weight: 400;
+  width: 199px;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-top: 7px;
+}
+
+.react-flow__node {
+  background-color: #ffffff;
+  border: 2px solid #6ede87;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  /* transition: all 0.2s ease; */
+}
+
+.react-flow__node-label {
+  color: #333333;
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.react-flow__node.selected {
+  border-color: #ff0072;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.Minimap {
+  width: 240px;
+  border: 1px solid black;
+  height: 160px;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  left: 78.1rem;
+}
+
+.Minimap .react-flow__node {
+  border-radius: 6px;
+}
+
+.Minimap .react-flow__node-label {
+  font-size: 12px;
+}
+
+.ElementsAlignment {
+  margin-left: 15px;
+
+}
+
+.btns {
+  position: relative;
+  top: 13px;
+  /* margin-left: 5px; */
+}
+
+.TTS {
+  margin-top: 7px;
+}
+
+.react-flow__minimap svg {
+  display: block;
+  border-radius: 5px;
+
+}
+
+.popup {
+  /* height: 48vh; */
+  height: 70vh !important;
+  border-radius: 6px;
+  background-color: #f6f6f6;
+  width: 215px;
+  padding: 6px;
+  padding-left: 21px;
+  border: 1px solid black;
+  margin-right: -7px;
+  overflow-y: auto;
+}
+
+.Initialpopup {
+  height: 70vh;
+  font-size: 13px;
+  border-radius: 6px;
+  background-color: #f6f6f6;
+  width: 220px;
+  padding: 6px;
+  padding-left: 15px;
+  border: 1px solid black;
+  margin-right: -7px;
+  overflow-y: auto;
+}
+
+.InputSave {
+  width: 200px;
+  margin-left: 15px;
+  margin-bottom: 65px;
+}
+
+.Closebtn {
+
+  margin-left: 73px;
+  background-color: red !important;
+
+}
+
+.SaveClosebtn {
+  /* margin-left: 73px; */
+  background-color: red !important;
+  margin-right: 10px;
+  margin-left: 100px;
+  color: white;
+  /* height: 30px; */
+  font-size: 14px;
+  border: none;
+  padding: 8px 16px;
+  font-weight: 500;
+  /* width: 90x; */
+  border-radius: 5px;
+}
+
+.saveflowpopup {
+  background-color: #007bff;
+  color: white;
+  /* height: 30px; */
+
+  margin-left: 17px;
+  font-size: 14px;
+  border: none;
+  padding: 8px 10px;
+  font-weight: 500;
+  /* width: 90x; */
+  border-radius: 5px;
+}
+
+
+.dndflow aside .description {
+  margin-bottom: 10px;
+}
+
+.popup-content button {
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  /* transition: background-color 0.1s ease; */
+}
+
+.popup-content button:hover {
+  background-color: #0056b3;
+}
+
+.dndflow .dndnode {
+  height: 20px;
+  padding: 4px;
+  border: 1px solid #1a192b;
+  border-radius: 2px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: grab;
+}
+
+.dndnode {
+  margin-top: 5px;
+}
+
+.dndflow .dndnode.input {
+  border-color: #0041d0;
+}
+
+.dndflow .dndnode.output {
+  border-color: #ff0072;
+}
+
+.dndflow .reactflow-wrapper {
+  flex-grow: 1;
+  height: 100%;
+}
+
+.dndflow .selectall {
+  margin-top: 10px;
+}
