@@ -1,0 +1,96 @@
+[
+    {
+        "source": "0",
+        "nodeType": "Start",
+        "sourceLabel": "Start",
+        "target": "Menu-1"
+    },
+    {
+        "source": "1",
+        "sourceLabel": "Menu-1",
+        "nodeType": "Menu",
+        "optionsTarget": {
+            "1": "Decision",
+            "2": "Audio-1"
+        },
+        "popupDetails": {
+            "id": "1",
+            "Menuname": "Menu-1",
+            "TexttoSay": "Menu 1",
+            "menuoptions": "2",
+            "Channel": ""
+        }
+    },
+    {
+        "source": "2",
+        "sourceLabel": "Menu-2",
+        "nodeType": "Menu",
+        "optionsTarget": {
+            "1": "Audio-2",
+            "2": "Audio-4",
+            "3": "Audio-3"
+        },
+        "popupDetails": {
+            "id": "2",
+            "Menuname": "Menu-2",
+            "TexttoSay": "Menu 2",
+            "menuoptions": "3",
+            "Channel": ""
+        }
+    },
+    {
+        "source": "3",
+        "sourceLabel": "Decision",
+        "nodeType": "Decision",
+        "decisionTarget": "Menu-2"
+    },
+    {
+        "source": "4",
+        "sourceLabel": "Audio-1",
+        "nodeType": "Audio",
+        "target": "Hangup-1",
+        "popupDetails": {
+            "id": "4",
+            "Menuname": "Audio-1",
+            "TexttoSay": "Audio 1"
+        }
+    },
+    {
+        "source": "5",
+        "sourceLabel": "Audio-2",
+        "nodeType": "Audio",
+        "target": "Hangup-1",
+        "popupDetails": {
+            "id": "5",
+            "Menuname": "Audio-2",
+            "TexttoSay": "Audio 2"
+        }
+    },
+    {
+        "source": "6",
+        "sourceLabel": "Audio-3",
+        "nodeType": "Audio",
+        "target": "Hangup-1",
+        "popupDetails": {
+            "id": "6",
+            "Menuname": "Audio-3",
+            "TexttoSay": "Audio 3"
+        }
+    },
+    {
+        "source": "7",
+        "sourceLabel": "Hangup-1",
+        "nodeType": "Hangup"
+    },
+    {
+        "source": "8",
+        "sourceLabel": "Audio-4",
+        "nodeType": "Audio",
+        "target": "Audio-3",
+        "popupDetails": {
+            "id": "8",
+            "Menuname": "Audio-4",
+            "TexttoSay": "Audio 4"
+        }
+    }
+]
