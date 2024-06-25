@@ -157,6 +157,11 @@ body {
   padding-right: 3px;
 }
 
+.Webhook {
+  height: 15px;
+  padding-right: 3px;
+}
+
 body .main-content {
   background-color: #f0f0f0;
   padding: 8px;
