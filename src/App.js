@@ -103,7 +103,11 @@ function App() {
               }
               : node;
           } else {
-            const optionNum = sourceNode.id.substring(sourceNode.id.length, sourceNode.id.length - 1)
+            var optionNum;
+
+            optionNum = (sourceNode.data.label === "NI" || sourceNode.data.label === "NM")
+              ? sourceNode.data.label
+              : (sourceNode.id.substring(sourceNode.id.length, sourceNode.parentId.length) - 2)
             return node.source === sourceNode.parentId
               ? {
                 ...node,
@@ -121,7 +125,7 @@ function App() {
         }
       }
       ))
-      const sourceNodeId = sourceNode.hasOwnProperty("parentId") ? params.source.substring(0, (params.source).length - 1) : params.source;
+      const sourceNodeId = sourceNode.hasOwnProperty("parentId") ? sourceNode.parentId : params.source;
       console.log("sourceNodeId in onconnect :: ,", sourceNodeId);
       console.log("Source node in 83 ::", 0)
 
@@ -147,13 +151,10 @@ function App() {
     });
   }, []);
 
-  useEffect(() => {
-    console.log("Nodes updated:", nodes);
-  }, [nodes]);
 
   useEffect(() => {
-    console.log("Node details updated:", nodeDetails);
-  }, [nodeDetails]);
+    console.log("last data :: ", lastData);
+  }, [lastData]);
 
 
   const onEdgeUpdate = useCallback(
@@ -171,7 +172,9 @@ function App() {
     event.dataTransfer.dropEffect = 'move';
   }, []);
 
-
+  useEffect(() => {
+    console.log("nodes menu :: ", nodes);
+  }, [nodes])
   const onDrop = useCallback(
     (event) => {
       event.preventDefault();
@@ -210,7 +213,7 @@ function App() {
           data: { label: index === 0 ? 'Yes' : "No" },
           extent: 'parent',
           parentId: newNode.id,
-          sourcePosition: "Bottom",
+          sourcePosition: "bottom",
           style: {
             width: 15,
             height: 20,
@@ -231,6 +234,48 @@ function App() {
           }
         ])
         console.log("nodes from onDrop", nodes);
+      } else if (nodeProps.nodeLabel === 'Menu') {
+        const newNode = {
+          id: getId(),
+          type: nodeProps.nodeType,
+          position,
+          data: { label: nodeProps.nodeLabel, type: nodeProps.nodeLabel },
+          style: {
+            width: 50,
+            height: 55,
+            padding: 5,
+            fontSize: '8px'
+          }
+        };
+        setNodes((nds) => nds.concat(newNode));
+        var newChildNodes = Array.from({ length: 2 }, (_, index) => ({
+          id: generateId(newNode.id, index),
+          type: 'input',
+          position: {
+            x: 30,
+            y: index === 0 ? 15 : 15 + index * 15
+          },
+          data: { label: index === 0 ? 'NI' : "NM" },
+          extent: 'parent',
+          parentId: newNode.id,
+          sourcePosition: "right",
+          style: {
+            width: 19,
+            height: 20,
+            padding: '6px 0px',
+            border: 'none',
+            fontSize: '8px'
+          },
+          draggable: false,
+        }));
+        setNodes((nds) => nds.concat(newChildNodes));
+        setLastData((prevNodes) => [
+          ...prevNodes, {
+            source: newNode.id,
+            sourceLabel: newNode.data.label,
+            nodeType: nodeProps.nodeLabel
+          }
+        ])
       } else {
 
         const newNode = {
@@ -381,10 +426,19 @@ function App() {
         } else if (node.nodeType === 'Decision') {
           return node.source === id
             ? {
-              ...node,
-              decisionTarget: node.hasOwnProperty('decisionTarget') && node.decisionTarget
-                ? Decision ? node.decisionTarget?.Yes : node.decisionTarget?.No
-                : {}
+              ...node, popupDetails: {
+                id,
+                Menuname: value
+              }
+            }
+            : node
+        }else if (node.nodeType === 'Application Modifier') {
+          return node.source === id
+            ? {
+              ...node, popupDetails: {
+                id,
+                Menuname: value
+              }
             }
             : node
         } else {
@@ -509,6 +563,27 @@ function App() {
     }
   }
 
+  const onNodesDelete = useCallback(
+    (deleted) => {
+      setLastData((prevData) => prevData.filter((node) => node.source !== deleted[0].id));
+      console.log("on node delete :: ", deleted);
+    }, [nodes, edges]
+  )
+
+  const onEdgesDelete = useCallback(
+    (edges) => {
+      // var deletedEdgeSource;
+      console.log("nodes in edge delete :: ", nodes);
+      // nodes.map((node) => {
+
+      //   console.log("nodes map edge delete :: ", node);
+      // })
+      const deletedEdgeSource = nodes.find((node) => node.id === edges[0].source)
+      console.log("on edge delete :: ", edges);
+      console.log("deletedEdgeSource :: ", deletedEdgeSource);
+    }, [edges]
+  )
+
   return (
     <ReactFlowProvider>
       <div className="grid-container">
@@ -536,6 +611,8 @@ function App() {
             saveFlow={saveFlow}
             Closebutton={Closebutton}
             Popupsave={Popupsave}
+            onNodesDelete={onNodesDelete}
+            onEdgesDelete={onEdgesDelete}
           />
         </div>
 
