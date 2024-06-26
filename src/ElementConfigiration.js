@@ -6,74 +6,15 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./index.css";
 
-function ElementConfiguration({
-  setAudioFile,
-  audioFile,
-  menuAudioFile,
-  setMenuAudioFile,
-  setEdges,
-  setLastData,
-  lastData,
-  setEndValue,
+function ElementConfiguration({ setAudioFile, audioFile, menuAudioFile, setMenuAudioFile, setEdges, setLastData, lastData, setChannel, method, setMethod, appModifier, generateId, startValue, endValue, setAppModifier, setId, id, handleSaveMenuNode, SetAudionode, selectedNodeData, showPopup, setShowPopup, nodes, setNodes, popupHeight, initialPopup, Setinitialpopup, currNode, SetMenunode, setValue, value, setTextToSay, textToSay, menuOption, Menunode, setMenuOption }) {
 
-  setStartValue,
-  setChannel,
-  method,
-  setMethod,
-  appModifier,
-  generateId,
-  startValue,
-  endValue,
-  operation,
-  Setoperation,
-  setAppModifier,
-  setId,
-  id,
-  assign,
-  Setassign,
-  handleSaveMenuNode,
-  SetAudionode,
-  setconcat,
-  concat,
-  selectedNodeData,
-  showPopup,
-  setShowPopup,
-  nodes,
-  setNodes,
-  popupHeight,
-  sessiondata,
-  setSessionData,
-  initialPopup,
-  Setinitialpopup,
-  currNode,
-  SetMenunode,
-  setValue,
-  value,
-  setTextToSay,
-  textToSay,
-  menuOption,
-  Menunode,
-  SetDecision,
-  Setsessionkey,
-  sessionkey,
-  sessionvalue,
-  Setsessionvalue,
-  Decision,
-  setMenuOption,
-}) {
-  const methods = [
-    "slice",
-    "substr",
-    "replace",
-    "toUpperCase",
-    "toLowerCase",
-    "concat",
-    "assign",
-  ];
+  const methods = ['slice', 'substr', 'replace', 'toUpperCase', 'toLowerCase', 'concat', 'split'];
 
-  console.log("menuAudioFile", menuAudioFile.name);
+
+  console.log("menuAudioFile", menuAudioFile.name)
 
   const handleSave = () => {
+
     if (!id.trim() || !value.trim()) {
       toast.error("ID and Name are required fields.");
       return;
@@ -220,17 +161,16 @@ function ElementConfiguration({
     const childNodes = nodes.filter((n) => n.parentId === currNode.id);
     let updatedNodes = [...nodes];
 
-    if (childNodes.length > 0) {
-      if (numNodes < childNodes.length) {
-        const slicedChildNodes = childNodes.slice(numNodes, childNodes.length);
+    if (childNodes.length > 2) {
+      if (numNodes < (childNodes.length - 2)) {
+        const slicedChildNodes = childNodes.slice(numNodes, (childNodes.length - 2));
         for (let i = 0; i < Object.keys(slicedChildNodes).length; i++) {
           setEdges((edges) =>
             edges.filter((edge) => edge.source !== slicedChildNodes[i].id)
           );
         }
-        updatedNodes = nodes
-          .filter((node) => node.parentId !== currNode.id)
-          .concat(childNodes.slice(0, numNodes));
+        updatedNodes = nodes.filter((node) => node.parentId !== currNode.id)
+          .concat(childNodes.slice(0, (numNodes + 2)));
         setLastData((prevNodes) => {
           return prevNodes.map((node) => {
             // console.log("currNode in map :: ", currNode.id);
@@ -238,28 +178,27 @@ function ElementConfiguration({
               const updatedOptions =
                 node.hasOwnProperty("optionsTarget") && node?.optionsTarget
                   ? Object.fromEntries(
-                      Object.entries(node.optionsTarget).filter(
-                        ([key, value]) => key <= numNodes
-                      )
+                    Object.entries(node.optionsTarget).filter(
+                      ([key, value]) => key <= numNodes
                     )
+                  )
                   : {};
               const updatedNode = {
                 ...node,
-                optionsTarget: updatedOptions,
-              };
-              return updatedNode;
+                optionsTarget: updatedOptions
+              }
+              return updatedNode
+
             } else {
               return node;
             }
-          });
-        });
-      } else if (numNodes > childNodes.length) {
-        const diff = numNodes - childNodes.length;
-        let lastChildId = Number(
-          childNodes[childNodes.length - 1].id.split("")[1]
-        );
-        const lastChild_Y_Pos = childNodes[childNodes.length - 1].position.y;
-
+          })
+        })
+      } else if (numNodes > (childNodes.length - 2)) {
+        const diff = numNodes - (childNodes.length - 2);
+        let lastChildId = Number((childNodes[childNodes.length - 1].id).split("")[1]);
+        const lastChild_Y_Pos = (childNodes[childNodes.length - 1].position).y;
+        console.log("lastchil id :: ", lastChildId);
         const newNodes = Array.from({ length: diff }, (_, index) => ({
           id: generateId(currNode.id, lastChildId + index),
           type: "input",
@@ -267,8 +206,8 @@ function ElementConfiguration({
             x: 34,
             y: lastChild_Y_Pos + (index + 1) * 15,
           },
-          data: { label: lastChildId + (index + 1) },
-          extent: "parent",
+          data: { label: (lastChildId - 2) + (index + 1) },
+          extent: 'parent',
           parentId: currNode.id,
           sourcePosition: "right",
           style: {
@@ -285,11 +224,11 @@ function ElementConfiguration({
       }
     } else {
       const newNodes = Array.from({ length: numNodes }, (_, index) => ({
-        id: generateId(currNode.id, index),
-        type: "input",
+        id: generateId(currNode.id, index + 2),
+        type: 'input',
         position: {
           x: 34,
-          y: index === 0 ? 15 : 15 + index * 15,
+          y: index === 0 ? 45 : 45 + index * 15
         },
         data: { label: `${index + 1}` },
         extent: "parent",
@@ -311,7 +250,7 @@ function ElementConfiguration({
     setNodes(
       updatedNodes.map((eachNode) => {
         if (eachNode.id === currNode.id) {
-          const baseHeight = 70;
+          const baseHeight = 100;
           const additionalHeight = 15;
           const heights = Array.from(
             { length: 8 },
@@ -400,7 +339,7 @@ function ElementConfiguration({
               value={value}
               onChange={handleChange}
             />
-            {selectedNodeData.data.type === "Audio" && (
+            {selectedNodeData.data.type === 'Audio' && (
               <div>
                 <div className="Texttosay">TEXT TO Speech</div>
                 <input
@@ -423,160 +362,167 @@ function ElementConfiguration({
                   }}
                 />
               </div>
-            )}
+            )
+            }
 
-            {Menunode && (
-              <>
-                <div>
-                  <div className="Texttosay">TEXT TO SAY</div>
-                  <input
-                    className="TexttosayInputbox"
-                    type="text"
-                    name="myInput"
-                    placeholder="Hello, welcome to zenius!"
-                    onChange={(e) => setTextToSay(e.target.value)}
-                  />
-                  <div className="Texttosay">Initial Audio File</div>
-                  <input
-                    className="AudioUploadInput"
-                    type="file"
-                    accept=".mp3,.wav"
-                    onChange={(e) => {
-                      const file = e.target.files[0];
-                      setMenuAudioFile(file);
+            {
+              Menunode && (
+                <>
+                  <div>
+                    <div className="Texttosay">TEXT TO SAY</div>
+                    <input
+                      className="TexttosayInputbox"
+                      type="text"
+                      name="myInput"
+                      placeholder="Hello, welcome to zenius!"
+                      onChange={(e) => setTextToSay(e.target.value)}
+                    />
+                    <div className="Texttosay">Initial Audio File</div>
+                    <input
+                      className="AudioUploadInput"
+                      type="file"
+                      accept=".mp3,.wav"
+                      onChange={(e) => {
+                        const file = e.target.files[0];
+                        setMenuAudioFile(file);
 
-                      console.log("Selected audio file:", file);
-                    }}
-                  />
-                  <div className="Texttosay">MENU OPTIONS</div>
+                        console.log("Selected audio file:", file);
+                      }}
+                    />
+                    <div className="Texttosay">MENU OPTIONS</div>
+                    <Dropdown
+                      className="ChannelDropdown"
+                      options={numbers}
+                      value={defaultnumber}
+                      placeholder="Select an option"
+                      onChange={(e) => setMenuOption(e.value)}
+                    />
+                  </div>
+                  <div className="Texttosay">Channel</div>
                   <Dropdown
                     className="ChannelDropdown"
-                    options={numbers}
-                    value={defaultnumber}
+                    options={options}
+                    value={defaultOption}
                     placeholder="Select an option"
-                    onChange={(e) => setMenuOption(e.value)}
+                    onChange={(e) => setChannel(e.value)}
                   />
-                </div>
-                <div className="Texttosay">Channel</div>
-                <Dropdown
-                  className="ChannelDropdown"
-                  options={options}
-                  value={defaultOption}
-                  placeholder="Select an option"
-                  onChange={(e) => setChannel(e.value)}
-                />
-              </>
-            )}
-            {Decision && (
-              <div>
-                <div className="Texttosay">SESSION KEY</div>
-                <input
-                  className="TexttosayInputbox"
-                  type="text"
-                  name="myInput"
-                  placeholder="Enter the Session key"
-                  onChange={(e) => Setsessionkey(e.target.value)}
-                />
-                <div className="Texttosay">Operation to perform</div>
-                <Dropdown
-                  className="ChannelDropdown"
-                  options={DecisionOptions}
-                  placeholder="Select an option"
-                  onChange={(e) => Setoperation(e.value)}
-                />
-                <div className="Texttosay">Value</div>
-                <input
-                  className="TexttosayInputbox"
-                  type="text"
-                  name="myInput"
-                  placeholder="Enter the Value"
-                  onChange={(e) => Setsessionvalue(e.target.value)}
-                />
-              </div>
-            )}
-            {appModifier && (
-              <>
+                </>
+              )
+            }
+            {
+              Decision && (
                 <div>
-                  <div className="Texttosay">Session data to modify</div>
+                  <div className="Texttosay">SESSION KEY</div>
                   <input
                     className="TexttosayInputbox"
                     type="text"
                     name="myInput"
-                    placeholder="Enter the session data"
-                    onChange={(e) => setSessionData(e.target.value)}
+                    placeholder="Enter the Session key"
+                    onChange={(e) => Setsessionkey(e.target.value)}
                   />
                   <div className="Texttosay">Operation to perform</div>
                   <Dropdown
                     className="ChannelDropdown"
-                    options={methods}
+                    options={DecisionOptions}
                     placeholder="Select an option"
-                    onChange={(e) => setMethod(e.value)}
+                    onChange={(e) => Setoperation(e.value)}
+                  />
+                  <div className="Texttosay">Value</div>
+                  <input
+                    className="TexttosayInputbox"
+                    type="text"
+                    name="myInput"
+                    placeholder="Enter the Value"
+                    onChange={(e) => Setsessionvalue(e.target.value)}
                   />
                 </div>
-                {(method === "slice" ||
-                  method === "substr" ||
-                  method === "replace") && (
-                  <>
-                    <div className="Texttosay">
-                      {method === "replace"
-                        ? "String to replace"
-                        : "Start Index"}
-                    </div>
-                    <input
-                      className="TexttosayInputbox"
-                      type={method === "replace" ? "text" : "number"}
-                      name="myInput"
-                      required
-                      placeholder={
-                        method === "replace"
-                          ? "Enter String to Replace"
-                          : "Enter Start Index"
-                      }
-                      onChange={(e) => setStartValue(e.target.value)}
-                    />
-                    <div className="Texttosay">
-                      {method === "replace" ? "Replace String" : "End Index"}
-                    </div>
-                    <input
-                      className="TexttosayInputbox"
-                      type={method === "replace" ? "text" : "number"}
-                      name="myInput"
-                      placeholder={
-                        method === "replace"
-                          ? "String to Replace with"
-                          : "Enter End Index"
-                      }
-                      onChange={(e) => setEndValue(e.target.value)}
-                    />
-                  </>
-                )}
-                {method === "assign" && (
-                  <>
-                    {/* <div className="Texttosay">Enter the Value to assign</div> */}
+              )
+            }
+            {
+              appModifier && (
+                <>
+                  <div>
+                    <div className="Texttosay">Session data to modify</div>
                     <input
                       className="TexttosayInputbox"
                       type="text"
                       name="myInput"
-                      placeholder={
-                        method === "assign" ? "Enter the value to assign" : ""
-                      }
-                      onChange={(e) => Setassign(e.target.value)}
+                      placeholder="Enter the session data"
+                      onChange={(e) => setSessionData(e.target.value)}
                     />
-                  </>
-                )}
-                {method === "concat" && (
-                  <>
-                    <input
-                      className="TexttosayInputbox"
-                      type="text"
-                      name="myInput"
-                      placeholder={"Enter String to Concat"}
-                      onChange={(e) => setconcat(e.target.value)}
+                    <div className="Texttosay">Operation to perform</div>
+                    <Dropdown
+                      className="ChannelDropdown"
+                      options={methods}
+                      placeholder="Select an option"
+                      onChange={(e) => setMethod(e.value)}
                     />
-                  </>
-                )}
-              </>
-            )}
+                  </div>
+                  {(method === "slice" ||
+                    method === "substr" ||
+                    method === "replace") && (
+                      <>
+                        <div className="Texttosay">
+                          {method === "replace"
+                            ? "String to replace"
+                            : "Start Index"}
+                        </div>
+                        <input
+                          className="TexttosayInputbox"
+                          type={method === "replace" ? "text" : "number"}
+                          name="myInput"
+                          required
+                          placeholder={
+                            method === "replace"
+                              ? "Enter String to Replace"
+                              : "Enter Start Index"
+                          }
+                          onChange={(e) => setStartValue(e.target.value)}
+                        />
+                        <div className="Texttosay">
+                          {method === "replace" ? "Replace String" : "End Index"}
+                        </div>
+                        <input
+                          className="TexttosayInputbox"
+                          type={method === "replace" ? "text" : "number"}
+                          name="myInput"
+                          placeholder={
+                            method === "replace"
+                              ? "String to Replace with"
+                              : "Enter End Index"
+                          }
+                          onChange={(e) => setEndValue(e.target.value)}
+                        />
+                      </>
+                    )}
+                  {method === "assign" && (
+                    <>
+                      {/* <div className="Texttosay">Enter the Value to assign</div> */}
+                      <input
+                        className="TexttosayInputbox"
+                        type="text"
+                        name="myInput"
+                        placeholder={
+                          method === "assign" ? "Enter the value to assign" : ""
+                        }
+                        onChange={(e) => Setassign(e.target.value)}
+                      />
+                    </>
+                  )}
+                  {method === "concat" && (
+                    <>
+                      <input
+                        className="TexttosayInputbox"
+                        type="text"
+                        name="myInput"
+                        placeholder={"Enter String to Concat"}
+                        onChange={(e) => setconcat(e.target.value)}
+                      />
+                    </>
+                  )}
+                </>
+              )
+            }
             <span className="btns">
               <button className="savebtn" onClick={handleSave}>
                 Save
@@ -586,8 +532,9 @@ function ElementConfiguration({
               </button>
             </span>
           </div>
-        </div>
-      )}
+        </div >
+      )
+      }
       <MiniMap
         className="Minimap"
         nodeColor={(node) => (node.type === "input" ? "#6ede87" : "#ff0072")}
