@@ -5,7 +5,7 @@ import 'reactflow/dist/style.css';
 import "./index.css"
 import Form from 'react-bootstrap/Form';
 // import { Button } from 'react-bootstrap';
-function Maincontent({Closebutton,saveFlow,flowName, handleFlowNameChange,savebtn,nodes, edges, onNodesChange, onEdgesChange, onConnect, onDrop, onDragOver, onNodeClick, setReactFlowInstance, selectedNodeData, isValidConnection, onEdgeUpdate }) {
+function Maincontent({ onEdgesDelete, onNodesDelete, Closebutton, saveFlow, flowName, handleFlowNameChange, savebtn, nodes, edges, onNodesChange, onEdgesChange, onConnect, onDrop, onDragOver, onNodeClick, setReactFlowInstance, selectedNodeData, isValidConnection, onEdgeUpdate }) {
   return (
     <div className="main-content">
       <ReactFlow
@@ -23,23 +23,25 @@ function Maincontent({Closebutton,saveFlow,flowName, handleFlowNameChange,savebt
         onInit={setReactFlowInstance}
         panOnScroll={true}
         proOptions={{ hideAttribution: true }}
+        onNodesDelete={onNodesDelete}
+        onEdgesDelete={onEdgesDelete}
       >
-        <Background color="#aaa" gap={15} />    
+        <Background color="#aaa" gap={15} />
 
-        { savebtn && (
-      <div className='SavePopup'> 
-      <span className='btns'>
-      <div className='FlownamePopup'>Flow Name:</div>
-      <div><input type="text" value={flowName} onChange={handleFlowNameChange} className="InputPOPup" placeholder="Enter the flow name"/></div>
-      <div className='PopupButtons'>
-      <Button className="SaveClosebtn" onClick={Closebutton} >Close</Button>
-      <Button onClick={saveFlow}  className='saveflowpopup'>Save Flow</Button>
-      </div>
+        {savebtn && (
+          <div className='SavePopup'>
+            <span className='btns'>
+              <div className='FlownamePopup'>Flow Name:</div>
+              <div><input type="text" value={flowName} onChange={handleFlowNameChange} className="InputPOPup" placeholder="Enter the flow name" /></div>
+              <div className='PopupButtons'>
+                <Button className="SaveClosebtn" onClick={Closebutton} >Close</Button>
+                <Button onClick={saveFlow} className='saveflowpopup'>Save Flow</Button>
+              </div>
             </span>
-      </div>
-    )}
+          </div>
+        )}
       </ReactFlow>
-      
+
     </div>
   );
 }

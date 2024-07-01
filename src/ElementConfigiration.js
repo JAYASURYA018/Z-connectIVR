@@ -70,7 +70,7 @@ function ElementConfiguration({
     "assign",
   ];
 
-  // console.log("menuAudioFile", menuAudioFile.name);
+  console.log("menuAudioFile", menuAudioFile.name);
 
   const handleSave = () => {
     if (!id.trim() || !value.trim()) {
@@ -219,9 +219,12 @@ function ElementConfiguration({
     const childNodes = nodes.filter((n) => n.parentId === currNode.id);
     let updatedNodes = [...nodes];
 
-    if (childNodes.length > 0) {
-      if (numNodes < childNodes.length) {
-        const slicedChildNodes = childNodes.slice(numNodes, childNodes.length);
+    if (childNodes.length > 2) {
+      if (numNodes < childNodes.length - 2) {
+        const slicedChildNodes = childNodes.slice(
+          numNodes,
+          childNodes.length - 2
+        );
         for (let i = 0; i < Object.keys(slicedChildNodes).length; i++) {
           setEdges((edges) =>
             edges.filter((edge) => edge.source !== slicedChildNodes[i].id)
@@ -229,7 +232,7 @@ function ElementConfiguration({
         }
         updatedNodes = nodes
           .filter((node) => node.parentId !== currNode.id)
-          .concat(childNodes.slice(0, numNodes));
+          .concat(childNodes.slice(0, numNodes + 2));
         setLastData((prevNodes) => {
           return prevNodes.map((node) => {
             // console.log("currNode in map :: ", currNode.id);
@@ -252,13 +255,13 @@ function ElementConfiguration({
             }
           });
         });
-      } else if (numNodes > childNodes.length) {
-        const diff = numNodes - childNodes.length;
+      } else if (numNodes > childNodes.length - 2) {
+        const diff = numNodes - (childNodes.length - 2);
         let lastChildId = Number(
           childNodes[childNodes.length - 1].id.split("")[1]
         );
         const lastChild_Y_Pos = childNodes[childNodes.length - 1].position.y;
-
+        console.log("lastchil id :: ", lastChildId);
         const newNodes = Array.from({ length: diff }, (_, index) => ({
           id: generateId(currNode.id, lastChildId + index),
           type: "input",
@@ -266,7 +269,7 @@ function ElementConfiguration({
             x: 34,
             y: lastChild_Y_Pos + (index + 1) * 15,
           },
-          data: { label: lastChildId + (index + 1) },
+          data: { label: lastChildId - 2 + (index + 1) },
           extent: "parent",
           parentId: currNode.id,
           sourcePosition: "right",
@@ -284,11 +287,11 @@ function ElementConfiguration({
       }
     } else {
       const newNodes = Array.from({ length: numNodes }, (_, index) => ({
-        id: generateId(currNode.id, index),
+        id: generateId(currNode.id, index + 2),
         type: "input",
         position: {
           x: 34,
-          y: index === 0 ? 15 : 15 + index * 15,
+          y: index === 0 ? 45 : 45 + index * 15,
         },
         data: { label: `${index + 1}` },
         extent: "parent",
@@ -310,7 +313,7 @@ function ElementConfiguration({
     setNodes(
       updatedNodes.map((eachNode) => {
         if (eachNode.id === currNode.id) {
-          const baseHeight = 70;
+          const baseHeight = 100;
           const additionalHeight = 15;
           const heights = Array.from(
             { length: 8 },
@@ -444,7 +447,7 @@ function ElementConfiguration({
                       const file = e.target.files[0];
                       setMenuAudioFile(file);
 
-                      console.log("Selected audio file:", file.File);
+                      console.log("Selected audio file:", file);
                     }}
                   />
                   <div className="Texttosay">MENU OPTIONS</div>
