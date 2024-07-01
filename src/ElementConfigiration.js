@@ -15,7 +15,6 @@ function ElementConfiguration({
   setLastData,
   lastData,
   setEndValue,
-
   setStartValue,
   setChannel,
   method,
@@ -71,7 +70,7 @@ function ElementConfiguration({
     "assign",
   ];
 
-  console.log("menuAudioFile", menuAudioFile.name);
+  // console.log("menuAudioFile", menuAudioFile.name);
 
   const handleSave = () => {
     if (!id.trim() || !value.trim()) {
@@ -382,7 +381,7 @@ function ElementConfiguration({
             <h3 className="Selectednode">
               Properties of {selectedNodeData.data.label}
             </h3>
-            <div className="Nodename">NODE ID</div>
+            {/* <div className="Nodename">NODE ID</div>
             <input
               className="Inputbox"
               type="text"
@@ -390,7 +389,7 @@ function ElementConfiguration({
               value={id}
               placeholder="node id"
               onChange={(e) => setId(e.target.value)}
-            />
+            /> */}
             <div className="Nodename">NODE NAME</div>
             <input
               className="Inputbox"
@@ -445,7 +444,7 @@ function ElementConfiguration({
                       const file = e.target.files[0];
                       setMenuAudioFile(file);
 
-                      console.log("Selected audio file:", file);
+                      console.log("Selected audio file:", file.File);
                     }}
                   />
                   <div className="Texttosay">MENU OPTIONS</div>

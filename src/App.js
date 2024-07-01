@@ -7,6 +7,7 @@ import {
   updateEdge,
   useStoreApi,
 } from "reactflow";
+import axios from "axios";
 import "reactflow/dist/style.css";
 import Navigator from "./Navigator";
 import Elements from "./Elements";
@@ -71,6 +72,8 @@ function App() {
   const [endValue, setEndValue] = useState("");
   const menuCounter = useRef(1);
   const hangupCounter = useRef(1);
+  const ApplicationModifierCounter = useRef(1);
+  const DecisionCounter = useRef(1);
   const audioCounter = useRef(1);
   const [sessionkey, Setsessionkey] = useState("");
   const [sessionvalue, Setsessionvalue] = useState("");
@@ -194,7 +197,7 @@ function App() {
       const nodeProps = JSON.parse(
         event.dataTransfer.getData("application/reactflow")
       );
-
+      console.log("nodeProps.nodeLabel", nodeProps.nodeLabel);
       if (!nodeProps.nodeType) {
         return;
       }
@@ -250,6 +253,9 @@ function App() {
             nodeType: nodeProps.nodeLabel,
           },
         ]);
+        if (nodeProps.nodeLabel === "Decision") {
+          newNode.data.label = `Decision-${DecisionCounter.current++}`;
+        }
         console.log("nodes from onDrop", nodes);
       } else {
         const newNode = {
@@ -263,7 +269,7 @@ function App() {
             fontSize: "8px",
           },
         };
-
+        console.log("nodeProps.nodeLabel", nodeProps.nodeLabel);
         console.log("newNode before dropped ::", newNode);
         if (nodeProps.nodeLabel === "Menu") {
           newNode.data.label = `Menu-${menuCounter.current++}`;
@@ -273,6 +279,9 @@ function App() {
         }
         if (nodeProps.nodeLabel === "Hangup") {
           newNode.data.label = `Hangup-${hangupCounter.current++}`;
+        }
+        if (nodeProps.nodeLabel === "Application Modifier") {
+          newNode.data.label = `Application Modifier-${ApplicationModifierCounter.current++}`;
         }
 
         setNodes((nds) => nds.concat(newNode));
@@ -361,17 +370,44 @@ function App() {
     setSaveBtn(true);
   };
 
+  const handleFileChange = (e) => {
+    e.preventDefault();
+    const file = e.target.files[0].File;
+    console.log("Selected audio file ===> 123:", file); // Log selected file
+    setMenuAudioFile(file);
+  };
   const handleSaveMenuNode = async (e) => {
+    const formData = new FormData();
+
+    // Append audio file to formData if it exists
+    if (menuAudioFile) {
+      formData.append("audioFile", menuAudioFile);
+    }
+
+    // Prepare the structured data payload
     const newRequestBody = {
       id,
       Menuname: value,
       TexttoSay: textToSay,
       menuoptions: menuOption,
       Channel: channel,
-      initialAudio: menuAudioFile ? menuAudioFile.name : "",
+      initialAudio: menuAudioFile
+        ? {
+            Audioname: menuAudioFile.name,
+            Audio: menuAudioFile,
+          }
+        : null,
     };
 
-    console.log("newRequestBody", newRequestBody);
+    // Append the JSON stringified version of newRequestBody to formData
+    formData.append("RequestBodyforMenu", JSON.stringify(newRequestBody));
+
+    // Log each entry in formData for debugging
+    for (let pair of formData.entries()) {
+      console.log("Form data entry:", pair[0], pair[1]);
+    }
+
+    console.log("FormData before submission:", formData);
 
     setLastData((prevNodes) => {
       return prevNodes.map((node) => {
@@ -417,7 +453,7 @@ function App() {
                 popupDetails: {
                   id,
                   SessionData: sessiondata,
-                  Operation: operation,
+                  Operation: method,
                   StartIndex: startValue,
                   EndIndex: endValue,
                   Concat: concat,
@@ -430,6 +466,7 @@ function App() {
         }
       });
     });
+
     console.log("Last data in app.js ", lastData);
 
     setNodeDetails((prevDetails) => ({
@@ -440,16 +477,18 @@ function App() {
     console.log("Updated nodeDetails:", nodeDetails);
 
     try {
-      const response = await fetch("http://localhost:5000/Menunode", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ RequestBodyforMenu: newRequestBody }),
-      });
+      const response = await axios.post(
+        "http://localhost:5000/Menunode",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
-      if (response.ok) {
-        console.log("API Response", await response.json());
+      if (response.status === 200) {
+        console.log("API Response", response.data);
         setShowPopup(false);
         Setinitialpopup(true);
         setTextToSay("");
@@ -466,14 +505,13 @@ function App() {
         Setassign("");
         setconcat("");
         toast.success(`Popup details of ${value} saved successfully`);
-        return;
       } else {
-        console.error(`Error saving ${value}`, await response.json());
-        toast.success(`Error saving ${value} details`);
-        return;
+        console.error(`Error saving ${value}`, response.data);
+        toast.error(`Error saving ${value} details`);
       }
     } catch (error) {
       console.error("Error saving flow and JavaScript code:", error);
+      toast.error("Error saving flow and JavaScript code");
     }
   };
 
@@ -607,6 +645,7 @@ function App() {
           SetDecision={SetDecision}
           Decision={Decision}
           setId={setId}
+          handleFileChange={handleFileChange}
           lastData={lastData}
           setLastData={setLastData}
           setAppModifier={setAppModifier}
