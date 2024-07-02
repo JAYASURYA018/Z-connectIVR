@@ -23,7 +23,7 @@ const getId = () => `${id++}`;
 const generateId = (parentId, childId) => {
   let newChildId = childId + 1;
   let result = parentId.toString() + newChildId.toString();
-  return result;
+  return "c" + result;
 };
 
 const initialNodes = [
@@ -135,7 +135,7 @@ function App() {
 
               optionNum = (sourceNode.data.label === "NI" || sourceNode.data.label === "NM")
                 ? sourceNode.data.label
-                : (sourceNode.id.substring(sourceNode.id.length, sourceNode.parentId.length) - 2)
+                : ((sourceNode.id.replace("c", "")).substring(sourceNode.id.length, sourceNode.parentId.length) - 2)
               return node.source === sourceNode.parentId
                 ? {
                   ...node,
@@ -186,8 +186,11 @@ function App() {
   }, [lastData]);
 
   const onEdgeUpdate = useCallback(
-    (oldEdge, newConnection) =>
-      setEdges((els) => updateEdge(oldEdge, newConnection, els)),
+    (oldEdge, newConnection) => {
+      console.log("old connection :: ", oldEdge);
+      console.log("new connection :: ", newConnection);
+      setEdges((els) => updateEdge(oldEdge, newConnection, els))
+    },
     [setEdges]
   );
 
@@ -200,9 +203,6 @@ function App() {
     event.dataTransfer.dropEffect = "move";
   }, []);
 
-  useEffect(() => {
-    console.log("nodes menu :: ", nodes);
-  }, [nodes])
 
   const onDrop = useCallback(
     (event) => {
@@ -629,14 +629,27 @@ function App() {
 
   const onEdgesDelete = useCallback(
     (edges) => {
-      // var deletedEdgeSource;
       console.log("nodes in edge delete :: ", nodes);
-      // nodes.map((node) => {
-
-      //   console.log("nodes map edge delete :: ", node);
-      // })
       const deletedEdgeSource = nodes.find((node) => node.id === edges[0].source)
       console.log("on edge delete :: ", edges);
+      if (deletedEdgeSource.parentId) {
+        const label = deletedEdgeSource.data.label;
+        setLastData(prevData =>
+          prevData.map(node => {
+            if (node.source === deletedEdgeSource.parentId) {
+              const { [label]: _, ...updatedDecisionTarget } = node.nodeType === 'Menu' ? node.optionsTarget : node.decisionTarget;
+              return node.nodeType === 'Menu' ? { ...node, optionsTarget: updatedDecisionTarget } : { ...node, decisionTarget: updatedDecisionTarget };
+            }
+            return node;
+          })
+        );
+      } else {
+        setLastData(prevData =>
+          prevData.map(node => {
+            return node.source === deletedEdgeSource.id ? { ...node, target: "" } : node;
+          })
+        );
+      }
       console.log("deletedEdgeSource :: ", deletedEdgeSource);
     }, [edges]
   )
