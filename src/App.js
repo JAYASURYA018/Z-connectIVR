@@ -7,8 +7,8 @@ import {
   updateEdge,
   useStoreApi,
 } from "reactflow";
-import "reactflow/dist/style.css";
 import axios from "axios";
+import "reactflow/dist/style.css";
 import Navigator from "./Navigator";
 import Elements from "./Elements";
 import Maincontent from "./Maincontent";
@@ -24,15 +24,14 @@ const getId = () => `${id++}`;
 const generateId = (parentId, childId) => {
   let newChildId = childId + 1;
   let result = parentId.toString() + newChildId.toString();
-  return result;
+  return "c" + result;
 };
 
 const initialNodes = [
   {
     id: getId(),
     type: "input",
-    data: { label: "Start", deletable: false },
-    // data: { label: "Start Node", deletable: false, type: "Start" },
+    data: { label: "Start", type: "Start" },
     position: { x: 250, y: 5 },
     style: {
       width: 50,
@@ -73,10 +72,10 @@ function App() {
   const [currNode, setCurrNode] = useState({});
   const [startValue, setStartValue] = useState("");
   const [endValue, setEndValue] = useState("");
-  const menuCounter = useRef(1);
-  const hangupCounter = useRef(1);
   const ApplicationModifierCounter = useRef(1);
   const DecisionCounter = useRef(1);
+  const menuCounter = useRef(1);
+  const hangupCounter = useRef(1);
   const audioCounter = useRef(1);
   const [sessionkey, Setsessionkey] = useState("");
   const [sessionvalue, Setsessionvalue] = useState("");
@@ -93,7 +92,6 @@ function App() {
       source: "0",
       nodeType: "Start",
       sourceLabel: "Start",
-      deletable: true,
     },
   ]);
   console.log("Node details inside onconnect ::", nodeDetails);
@@ -115,26 +113,42 @@ function App() {
             ) {
               return node.source === sourceNode.parentId
                 ? {
-                    ...node,
-                    decisionTarget: {
-                      ...node.decisionTarget,
-                      [sourceNode.data.label]: targetNode.data.label,
-                    },
-                  }
+                  ...node,
+                  decisionTarget: {
+                    ...node.decisionTarget,
+                    [sourceNode.data.label]: targetNode.data.label,
+                  },
+                }
                 : node;
+              // } else {
+              //   const optionNum = sourceNode.id.substring(
+              //     sourceNode.id.length,
+              //     sourceNode.id.length - 1
+              //   );
+              //   return node.source === sourceNode.parentId
+              //     ? {
+              //         ...node,
+              //         optionsTarget: {
+              //           ...node.optionsTarget,
+              //           [optionNum]: targetNode.data.label,
+              //         },
+              //       }
+              //     : node;
+              // }
             } else {
-              const optionNum = sourceNode.id.substring(
-                sourceNode.id.length,
-                sourceNode.id.length - 1
-              );
+              var optionNum;
+
+              optionNum = (sourceNode.data.label === "NI" || sourceNode.data.label === "NM")
+                ? sourceNode.data.label
+                : ((sourceNode.id.replace("c", "")).substring(sourceNode.id.length, sourceNode.parentId.length) - 2)
               return node.source === sourceNode.parentId
                 ? {
-                    ...node,
-                    optionsTarget: {
-                      ...node.optionsTarget,
-                      [optionNum]: targetNode.data.label,
-                    },
-                  }
+                  ...node,
+                  optionsTarget: {
+                    ...node.optionsTarget,
+                    [optionNum]: targetNode.data.label,
+                  },
+                }
                 : node;
             }
           } else {
@@ -145,8 +159,9 @@ function App() {
         })
       );
       const sourceNodeId = sourceNode.hasOwnProperty("parentId")
-        ? params.source.substring(0, params.source.length - 1)
+        ? sourceNode.parentId
         : params.source;
+
       console.log("sourceNodeId in onconnect :: ,", sourceNodeId);
       console.log("Source node in 83 ::", 0);
 
@@ -173,16 +188,15 @@ function App() {
   }, []);
 
   useEffect(() => {
-    console.log("Nodes updated:", nodes);
-  }, [nodes]);
-
-  useEffect(() => {
-    console.log("Node details updated:", nodeDetails);
-  }, [nodeDetails]);
+    console.log("last data :: ", lastData);
+  }, [lastData]);
 
   const onEdgeUpdate = useCallback(
-    (oldEdge, newConnection) =>
-      setEdges((els) => updateEdge(oldEdge, newConnection, els)),
+    (oldEdge, newConnection) => {
+      console.log("old connection :: ", oldEdge);
+      console.log("new connection :: ", newConnection);
+      setEdges((els) => updateEdge(oldEdge, newConnection, els))
+    },
     [setEdges]
   );
 
@@ -194,6 +208,7 @@ function App() {
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
   }, []);
+
 
   const onDrop = useCallback(
     (event) => {
@@ -216,7 +231,7 @@ function App() {
           id: getId(),
           type: nodeProps.nodeType,
           position,
-          data: { label: nodeProps.nodeLabel, type: "Decision" },
+          data: { label: `Decision-${DecisionCounter.current++}`, type: "Decision" },
           style: {
             width: 90,
             height: 30,
@@ -257,10 +272,50 @@ function App() {
             nodeType: nodeProps.nodeLabel,
           },
         ]);
-        if (nodeProps.nodeLabel === "Decision") {
-          newNode.data.label = `Decision-${DecisionCounter.current++}`;
-        }
         console.log("nodes from onDrop", nodes);
+      } else if (nodeProps.nodeLabel === "Menu") {
+        const newNode = {
+          id: getId(),
+          type: nodeProps.nodeType,
+          position,
+          data: { label: `Menu-${menuCounter.current++}`, type: nodeProps.nodeLabel },
+          style: {
+            width: 50,
+            height: 55,
+            padding: 5,
+            fontSize: "8px",
+          },
+        };
+        setNodes((nds) => nds.concat(newNode));
+        var newChildNodes = Array.from({ length: 2 }, (_, index) => ({
+          id: generateId(newNode.id, index),
+          type: "input",
+          position: {
+            x: 30,
+            y: index === 0 ? 15 : 15 + index * 15,
+          },
+          data: { label: index === 0 ? "NI" : "NM" },
+          extent: "parent",
+          parentId: newNode.id,
+          sourcePosition: "right",
+          style: {
+            width: 19,
+            height: 20,
+            padding: "6px 0px",
+            border: "none",
+            fontSize: "8px",
+          },
+          draggable: false,
+        }));
+        setNodes((nds) => nds.concat(newChildNodes));
+        setLastData((prevNodes) => [
+          ...prevNodes,
+          {
+            source: newNode.id,
+            sourceLabel: newNode.data.label,
+            nodeType: nodeProps.nodeLabel,
+          },
+        ]);
       } else {
         const newNode = {
           id: getId(),
@@ -373,7 +428,6 @@ function App() {
   const Popupsave = () => {
     setSaveBtn(true);
   };
-
   const handleFileChange = (e) => {
     e.preventDefault();
     const file = e.target.files[0].File;
@@ -397,9 +451,9 @@ function App() {
       Channel: channel,
       initialAudio: menuAudioFile
         ? {
-            Audioname: menuAudioFile.name,
-            Audio: menuAudioFile,
-          }
+          Audioname: menuAudioFile.name,
+          Audio: menuAudioFile,
+        }
         : null,
     };
 
@@ -423,34 +477,29 @@ function App() {
         } else if (node.nodeType === "Audio") {
           return node.source === id
             ? {
-                ...node,
-                popupDetails: {
-                  id,
-                  Menuname: value,
-                  TexttoSay: textToSay,
-                  initialAudio: audioFile
-                    ? {
-                        Audioname: audioFile.name,
-                        Audio: audioFile,
-                      }
-                    : null,
-                },
-              }
+              ...node,
+              popupDetails: {
+                id,
+                Menuname: value,
+                TexttoSay: textToSay,
+                initialAudio: audioFile ? audioFile.name : "",
+              },
+            }
             : node;
         } else if (node.nodeType === "Decision") {
           console.log("node source in decision :", node.source);
           console.log("id in decision :", id);
           return node.source === id
             ? {
-                ...node,
-                popupDetails: {
-                  id,
-                  Menuname: value,
-                  SessionKey: sessionkey,
-                  Operation: operation,
-                  Value: sessionvalue,
-                },
-              }
+              ...node,
+              popupDetails: {
+                id,
+                Menuname: value,
+                SessionKey: sessionkey,
+                Operation: operation,
+                Value: sessionvalue,
+              },
+            }
             : node;
         } else if (node.nodeType === "Application Modifier") {
           console.log("Inside application modifier in app.js");
@@ -458,17 +507,17 @@ function App() {
           console.log("id in Application :", id);
           return node.source === id
             ? {
-                ...node,
-                popupDetails: {
-                  id,
-                  SessionData: sessiondata,
-                  Operation: operation,
-                  StartIndex: startValue,
-                  EndIndex: endValue,
-                  Concat: concat,
-                  Assign: assign,
-                },
-              }
+              ...node,
+              popupDetails: {
+                id,
+                SessionData: sessiondata,
+                Operation: operation,
+                StartIndex: startValue,
+                EndIndex: endValue,
+                Concat: concat,
+                Assign: assign,
+              },
+            }
             : node;
         } else {
           return node;
@@ -609,6 +658,48 @@ function App() {
     }
   };
 
+  const onNodesDelete = useCallback(
+    (deleted) => {
+      setLastData((prevData) =>
+        prevData.filter((node) => node.source !== deleted[0].id)
+      );
+      console.log("on node delete :: ", deleted);
+    },
+    [nodes, edges]
+  );
+
+  const onEdgesDelete = useCallback(
+    (edges) => {
+      console.log("nodes in edge delete :: ", nodes);
+      // nodes.map((node) => {
+
+      //   console.log("nodes map edge delete :: ", node);
+      // })
+      const deletedEdgeSource = nodes.find((node) => node.id === edges[0].source)
+      console.log("on edge delete :: ", edges);
+      if (deletedEdgeSource.parentId) {
+        const label = deletedEdgeSource.data.label;
+        setLastData(prevData =>
+          prevData.map(node => {
+            if (node.source === deletedEdgeSource.parentId) {
+              const { [label]: _, ...updatedDecisionTarget } = node.nodeType === 'Menu' ? node.optionsTarget : node.decisionTarget;
+              return node.nodeType === 'Menu' ? { ...node, optionsTarget: updatedDecisionTarget } : { ...node, decisionTarget: updatedDecisionTarget };
+            }
+            return node;
+          })
+        );
+      } else {
+        setLastData(prevData =>
+          prevData.map(node => {
+            return node.source === deletedEdgeSource.id ? { ...node, target: "" } : node;
+          })
+        );
+      }
+      console.log("deletedEdgeSource :: ", deletedEdgeSource);
+    },
+    [edges]
+  );
+
   return (
     <ReactFlowProvider>
       <div className="grid-container">
@@ -642,6 +733,8 @@ function App() {
             saveFlow={saveFlow}
             Closebutton={Closebutton}
             Popupsave={Popupsave}
+            onNodesDelete={onNodesDelete}
+            onEdgesDelete={onEdgesDelete}
           />
         </div>
 
@@ -654,11 +747,14 @@ function App() {
           SetDecision={SetDecision}
           Decision={Decision}
           setId={setId}
+          handleFileChange={handleFileChange}
           lastData={lastData}
           setLastData={setLastData}
           setAppModifier={setAppModifier}
           setMenuAudioFile={setMenuAudioFile}
           menuAudioFile={menuAudioFile}
+          setMenuSelectedOption={setMenuSelectedOption}
+          menuselectedOption={menuselectedOption}
           setEdges={setEdges}
           method={method}
           Setoperation={Setoperation}
@@ -667,8 +763,6 @@ function App() {
           setAudioFile={setAudioFile}
           audioFile={audioFile}
           audioName={audioName}
-          setMenuSelectedOption={setMenuSelectedOption}
-          menuselectedOption={menuselectedOption}
           setMethod={setMethod}
           Audionode={Audionode}
           appModifier={appModifier}
@@ -679,8 +773,6 @@ function App() {
           generateId={generateId}
           setNodes={setNodes}
           setChannel={setChannel}
-          selectedOption={selectedOption}
-          setSelectedOption={setSelectedOption}
           popupHeight={popupHeight}
           id={id}
           Setassign={Setassign}

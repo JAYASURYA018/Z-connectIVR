@@ -13,7 +13,7 @@ function Elements({ onDragStart }) {
   // console.log("onDragStart in Elements ::",onDragStart)
   return (
     <div className="sidebar-Elements">
-      <h3>Elements</h3>
+      <h3>Elements Panel</h3>
       <div className="ElementsAlignment">
         <div
           className="dndnode"
@@ -23,7 +23,6 @@ function Elements({ onDragStart }) {
           draggable
         >
           <FontAwesomeIcon className="StartIcon" icon={faHouseSignal} /> Start
-          Node
         </div>
         <div
           className="dndnode"
@@ -32,30 +31,28 @@ function Elements({ onDragStart }) {
           }
           draggable
         >
-          <FontAwesomeIcon className="MenuIcon" icon={faBars} /> Menu Node
+          <FontAwesomeIcon className="MenuIcon" icon={faBars} /> Menu
         </div>
         <div
           className="dndnode"
           onDragStart={(event) =>
-            onDragStart(event, { nodeLabel: "Audio", nodeType: "default" })
+            onDragStart(event, { nodeLabel: "Play Prompt", nodeType: "default" })
           }
           draggable
         >
-          <FontAwesomeIcon className="AudioIcon" icon={faFileAudio} /> Audio
-          Node
+          <FontAwesomeIcon className="AudioIcon" icon={faFileAudio} /> Play Prompt
         </div>
         <div
           className="dndnode"
           onDragStart={(event) =>
             onDragStart(event, {
-              nodeLabel: "Application Modifier",
+              nodeLabel: "Session Modifier",
               nodeType: "default",
             })
           }
           draggable
         >
-          <FontAwesomeIcon className="HangupIcon" icon={faEdit} /> Application
-          Modifier
+          <FontAwesomeIcon className="HangupIcon" icon={faEdit} /> Session Variable 
         </div>
         <div
           className="dndnode"
@@ -64,8 +61,7 @@ function Elements({ onDragStart }) {
           }
           draggable
         >
-          <FontAwesomeIcon className="Decision" icon={faDiamond} /> Decision
-          Node
+          <FontAwesomeIcon className="Decision" icon={faDiamond} /> Condition
         </div>
 
         <div
@@ -76,16 +72,16 @@ function Elements({ onDragStart }) {
           draggable
         >
           <FontAwesomeIcon className="Webhook" icon={faCircleNodes} />
-          Webhook Node
+          Webhook
         </div>
         <div
           className="dndnode"
           onDragStart={(event) =>
-            onDragStart(event, { nodeLabel: "Hangup", nodeType: "output" })
+            onDragStart(event, { nodeLabel: "Disconnect", nodeType: "output" })
           }
           draggable
         >
-          <FontAwesomeIcon className="HangupIcon" icon={faPhone} /> Hangup Node
+          <FontAwesomeIcon className="HangupIcon" icon={faPhone} /> Disconnect
         </div>
       </div>
     </div>

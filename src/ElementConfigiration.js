@@ -48,6 +48,10 @@ function ElementConfiguration({
   SetMenunode,
   setValue,
   value,
+  setSelectedOption,
+  selectedOption,
+  setMenuSelectedOption,
+  menuselectedOption,
   setTextToSay,
   textToSay,
   menuOption,
@@ -166,7 +170,7 @@ function ElementConfiguration({
       setValue(selectedNodeData.data.label);
       console.log("selected node in elements config ", selectedNodeData);
       switch (selectedNodeData.data.type) {
-        case "Hangup":
+        case "Disconnect":
           SetMenunode(false);
           SetAudionode(false);
           setAppModifier(false);
@@ -177,13 +181,13 @@ function ElementConfiguration({
           setAppModifier(false);
           SetDecision(false);
           break;
-        case "Audio":
+        case "Play Prompt":
           SetMenunode(false);
           SetAudionode(true);
           setAppModifier(false);
           SetDecision(false);
           break;
-        case "Application Modifier":
+        case "Session Modifier":
           SetMenunode(false);
           SetAudionode(false);
           setAppModifier(true);
@@ -240,10 +244,10 @@ function ElementConfiguration({
               const updatedOptions =
                 node.hasOwnProperty("optionsTarget") && node?.optionsTarget
                   ? Object.fromEntries(
-                      Object.entries(node.optionsTarget).filter(
-                        ([key, value]) => key <= numNodes
-                      )
+                    Object.entries(node.optionsTarget).filter(
+                      ([key, value]) => key <= numNodes
                     )
+                  )
                   : {};
               const updatedNode = {
                 ...node,
@@ -366,9 +370,9 @@ function ElementConfiguration({
     "Greater than or equal to",
     "Less than or equal to",
   ];
-  const numbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
-  const defaultOption = options[0];
-  const defaultnumber = numbers[0];
+  const numbers = ["2", "3", "4", "5", "6", "7", "8", "9"];
+  // const defaultOption = options[0];
+  // const defaultnumber = numbers[0];
 
   return (
     <>
@@ -400,71 +404,127 @@ function ElementConfiguration({
               value={value}
               onChange={handleChange}
             />
-            {selectedNodeData.data.type === "Audio" && (
+            {selectedNodeData.data.type === "Play Prompt" && (
               <div>
-                <div className="Texttosay">TEXT TO Speech</div>
-                <input
-                  className="TexttosayInputbox"
-                  type="text"
-                  name="myInput"
-                  placeholder="Enter the text"
-                  value={textToSay}
-                  onChange={(e) => setTextToSay(e.target.value)}
-                />
-                <div className="Texttosay">Upload Audio File</div>
-                <input
-                  className="AudioUploadInput"
-                  type="file"
-                  accept=".mp3,.wav"
-                  onChange={(e) => {
-                    const file = e.target.files[0];
-                    setAudioFile(file);
-                    console.log("Selected audio file:", file);
-                  }}
-                />
+                <div className="Radiobtn">
+                  <label className="TTSRadioBtn">
+                    <input
+                      type="radio"
+                      value="tts"
+                      checked={selectedOption === "tts"}
+                      onChange={() => setSelectedOption("tts")}
+                    />
+                    TTS
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      value="prompt"
+                      checked={selectedOption === "prompt"}
+                      onChange={() => setSelectedOption("prompt")}
+                    />
+                    Prompt
+                  </label>
+                </div>
+                {selectedOption === "tts" && (
+                  <div>
+                    <div className="Texttosay">TEXT TO Speech</div>
+                    <input
+                      className="TexttosayInputbox"
+                      type="text"
+                      name="myInput"
+                      placeholder="Enter the text to speech"
+                      value={textToSay}
+                      onChange={(e) => setTextToSay(e.target.value)}
+                    />
+                  </div>
+                )}
+                {selectedOption === "prompt" && (
+                  <div>
+                    <div className="Texttosay">Upload Audio File</div>
+                    <input
+                      className="AudioUploadInput"
+                      type="file"
+                      accept=".mp3,.wav"
+                      onChange={(e) => {
+                        const file = e.target.files[0];
+                        setAudioFile(file);
+                        console.log("Selected audio file:", file);
+                      }}
+                    />
+                  </div>
+                )}
               </div>
             )}
 
             {Menunode && (
               <>
                 <div>
-                  <div className="Texttosay">TEXT TO SAY</div>
-                  <input
-                    className="TexttosayInputbox"
-                    type="text"
-                    name="myInput"
-                    placeholder="Hello, welcome to zenius!"
-                    onChange={(e) => setTextToSay(e.target.value)}
-                  />
-                  <div className="Texttosay">Initial Audio File</div>
-                  <input
-                    className="AudioUploadInput"
-                    type="file"
-                    accept=".mp3,.wav"
-                    onChange={(e) => {
-                      const file = e.target.files[0];
-                      setMenuAudioFile(file);
-
-                      console.log("Selected audio file:", file);
-                    }}
-                  />
+                  <div>
+                    <div className="Radiobtn">
+                      <label className="TTSRadioBtn">
+                        <input
+                          type="radio"
+                          value="TTS"
+                          checked={menuselectedOption === "TTS"}
+                          onChange={() => setMenuSelectedOption("TTS")}
+                        />
+                        TTS
+                      </label>
+                      <label>
+                        <input
+                          type="radio"
+                          value="PROMPT"
+                          checked={menuselectedOption === "PROMPT"}
+                          onChange={() => setMenuSelectedOption("PROMPT")}
+                        />
+                        Prompt
+                      </label>
+                    </div>
+                  </div>
+                  {menuselectedOption === "TTS" && (
+                    <div>
+                      <div className="Texttosay">TEXT TO SAY</div>
+                      <input
+                        className="TexttosayInputbox"
+                        type="text"
+                        name="myInput"
+                        placeholder="Enter the text to speech"
+                        onChange={(e) => setTextToSay(e.target.value)}
+                      />
+                    </div>
+                  )}
+                  {menuselectedOption === "PROMPT" && (
+                    <div>
+                      <div className="Texttosay">Initial Audio File</div>
+                      <input
+                        className="AudioUploadInput"
+                        type="file"
+                        accept=".mp3,.wav"
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          setMenuAudioFile(file);
+                          console.log("Selected audio file:", file);
+                        }}
+                      />
+                    </div>
+                  )}
                   <div className="Texttosay">MENU OPTIONS</div>
                   <Dropdown
                     className="ChannelDropdown"
                     options={numbers}
-                    value={defaultnumber}
                     placeholder="Select an option"
                     onChange={(e) => setMenuOption(e.value)}
                   />
                 </div>
-                <div className="Texttosay">Channel</div>
-                <Dropdown
-                  className="ChannelDropdown"
-                  options={options}
-                  value={defaultOption}
-                  placeholder="Select an option"
-                  onChange={(e) => setChannel(e.value)}
-                />
+                {/* <div className="Texttosay">Channel</div>
+                      <Dropdown
+                          className="ChannelDropdown"
+                          options={options}
+                          value={defaultOption}
+                          placeholder="Select an option"
+                          onChange={(e) => setChannel(e.value)}
+                      /> */}
               </>
             )}
             {Decision && (
@@ -516,40 +576,40 @@ function ElementConfiguration({
                 {(method === "slice" ||
                   method === "substr" ||
                   method === "replace") && (
-                  <>
-                    <div className="Texttosay">
-                      {method === "replace"
-                        ? "String to replace"
-                        : "Start Index"}
-                    </div>
-                    <input
-                      className="TexttosayInputbox"
-                      type={method === "replace" ? "text" : "number"}
-                      name="myInput"
-                      required
-                      placeholder={
-                        method === "replace"
-                          ? "Enter String to Replace"
-                          : "Enter Start Index"
-                      }
-                      onChange={(e) => setStartValue(e.target.value)}
-                    />
-                    <div className="Texttosay">
-                      {method === "replace" ? "Replace String" : "End Index"}
-                    </div>
-                    <input
-                      className="TexttosayInputbox"
-                      type={method === "replace" ? "text" : "number"}
-                      name="myInput"
-                      placeholder={
-                        method === "replace"
-                          ? "String to Replace with"
-                          : "Enter End Index"
-                      }
-                      onChange={(e) => setEndValue(e.target.value)}
-                    />
-                  </>
-                )}
+                    <>
+                      <div className="Texttosay">
+                        {method === "replace"
+                          ? "String to replace"
+                          : "Start Index"}
+                      </div>
+                      <input
+                        className="TexttosayInputbox"
+                        type={method === "replace" ? "text" : "number"}
+                        name="myInput"
+                        required
+                        placeholder={
+                          method === "replace"
+                            ? "Enter String to Replace"
+                            : "Enter Start Index"
+                        }
+                        onChange={(e) => setStartValue(e.target.value)}
+                      />
+                      <div className="Texttosay">
+                        {method === "replace" ? "Replace String" : "End Index"}
+                      </div>
+                      <input
+                        className="TexttosayInputbox"
+                        type={method === "replace" ? "text" : "number"}
+                        name="myInput"
+                        placeholder={
+                          method === "replace"
+                            ? "String to Replace with"
+                            : "Enter End Index"
+                        }
+                        onChange={(e) => setEndValue(e.target.value)}
+                      />
+                    </>
+                  )}
                 {method === "assign" && (
                   <>
                     {/* <div className="Texttosay">Enter the Value to assign</div> */}
@@ -577,15 +637,15 @@ function ElementConfiguration({
                 )}
               </>
             )}
-            <span className="btns">
-              <button className="savebtn" onClick={handleSave}>
-                Save
-              </button>
-              <button className="Closebtn" onClick={Handleclosepopup}>
-                Close
-              </button>
-            </span>
           </div>
+          <span className="btns">
+            <button className="savebtn" onClick={handleSave}>
+              Save
+            </button>
+            <button className="Closebtn" onClick={Handleclosepopup}>
+              Close
+            </button>
+          </span>
         </div>
       )}
       <MiniMap
