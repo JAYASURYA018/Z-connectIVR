@@ -46,7 +46,7 @@ function Elements({ onDragStart }) {
           className="dndnode"
           onDragStart={(event) =>
             onDragStart(event, {
-              nodeLabel: "Session Modifier",
+              nodeLabel: "Session Variable",
               nodeType: "default",
             })
           }

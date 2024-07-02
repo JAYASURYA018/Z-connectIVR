@@ -174,6 +174,7 @@ function ElementConfiguration({
           SetMenunode(false);
           SetAudionode(false);
           setAppModifier(false);
+          SetDecision(false);
           break;
         case "Menu":
           SetMenunode(true);
@@ -187,7 +188,7 @@ function ElementConfiguration({
           setAppModifier(false);
           SetDecision(false);
           break;
-        case "Session Modifier":
+        case "Session Variable":
           SetMenunode(false);
           SetAudionode(false);
           setAppModifier(true);

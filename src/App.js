@@ -231,7 +231,7 @@ function App() {
           id: getId(),
           type: nodeProps.nodeType,
           position,
-          data: { label: `Decision-${DecisionCounter.current++}`, type: "Decision" },
+          data: { label: `Condition-${DecisionCounter.current++}`, type: "Decision" },
           style: {
             width: 90,
             height: 30,
@@ -330,17 +330,14 @@ function App() {
         };
         console.log("nodeProps.nodeLabel", nodeProps.nodeLabel);
         console.log("newNode before dropped ::", newNode);
-        if (nodeProps.nodeLabel === "Menu") {
-          newNode.data.label = `Menu-${menuCounter.current++}`;
-        }
         if (nodeProps.nodeLabel === "Play Prompt") {
           newNode.data.label = `Play Prompt-${audioCounter.current++}`;
         }
         if (nodeProps.nodeLabel === "Disconnect") {
           newNode.data.label = `Disconnect-${hangupCounter.current++}`;
         }
-        if (nodeProps.nodeLabel === "Session Modifier") {
-          newNode.data.label = `Session Modifier-${ApplicationModifierCounter.current++}`;
+        if (nodeProps.nodeLabel === "Session Variable") {
+          newNode.data.label = `Session Variable-${ApplicationModifierCounter.current++}`;
         }
 
         setNodes((nds) => nds.concat(newNode));
@@ -474,7 +471,7 @@ function App() {
           return node.source === id
             ? { ...node, popupDetails: newRequestBody }
             : node;
-        } else if (node.nodeType === "Audio") {
+        } else if (node.nodeType === "Play Prompt") {
           return node.source === id
             ? {
               ...node,
@@ -501,7 +498,7 @@ function App() {
               },
             }
             : node;
-        } else if (node.nodeType === "Application Modifier") {
+        } else if (node.nodeType === "Session Variable") {
           console.log("Inside application modifier in app.js");
           console.log("node source in Applcaition  :", node.source);
           console.log("id in Application :", id);
@@ -511,7 +508,7 @@ function App() {
               popupDetails: {
                 id,
                 SessionData: sessiondata,
-                Operation: operation,
+                Operation: method,
                 StartIndex: startValue,
                 EndIndex: endValue,
                 Concat: concat,
@@ -776,6 +773,8 @@ function App() {
           popupHeight={popupHeight}
           id={id}
           Setassign={Setassign}
+          selectedOption={selectedOption}
+          setSelectedOption={setSelectedOption}
           assign={assign}
           Setinitialpopup={Setinitialpopup}
           initialPopup={initialPopup}
