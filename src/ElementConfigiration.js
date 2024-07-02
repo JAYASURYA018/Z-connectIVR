@@ -255,7 +255,7 @@ function ElementConfiguration({ setAudioFile,
         })
       } else if (numNodes > (childNodes.length - 2)) {
         const diff = numNodes - (childNodes.length - 2);
-        let lastChildId = Number((childNodes[childNodes.length - 1].id).split("")[1]);
+        let lastChildId = Number(((childNodes[childNodes.length - 1].id).replace("c", "")).split("")[1]);
         const lastChild_Y_Pos = (childNodes[childNodes.length - 1].position).y;
         console.log("lastchil id :: ", lastChildId);
         const newNodes = Array.from({ length: diff }, (_, index) => ({
@@ -380,7 +380,7 @@ function ElementConfiguration({ setAudioFile,
             <h3 className="Selectednode">
               Properties of {selectedNodeData.data.label}
             </h3>
-            <div className="Nodename">NODE ID</div>
+            {/* <div className="Nodename">NODE ID</div>
             <input
               className="Inputbox"
               type="text"
@@ -388,7 +388,7 @@ function ElementConfiguration({ setAudioFile,
               value={id}
               placeholder="node id"
               onChange={(e) => setId(e.target.value)}
-            />
+            /> */}
             <div className="Nodename">NODE NAME</div>
             <input
               className="Inputbox"
