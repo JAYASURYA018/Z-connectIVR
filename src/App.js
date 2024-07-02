@@ -111,12 +111,12 @@ function App() {
             ) {
               return node.source === sourceNode.parentId
                 ? {
-                  ...node,
-                  decisionTarget: {
-                    ...node.decisionTarget,
-                    [sourceNode.data.label]: targetNode.data.label,
-                  },
-                }
+                    ...node,
+                    decisionTarget: {
+                      ...node.decisionTarget,
+                      [sourceNode.data.label]: targetNode.data.label,
+                    },
+                  }
                 : node;
               // } else {
               //   const optionNum = sourceNode.id.substring(
@@ -141,22 +141,24 @@ function App() {
                 : ((sourceNode.id.replace("c", "")).substring(sourceNode.id.length, sourceNode.parentId.length) - 2)
               return node.source === sourceNode.parentId
                 ? {
-                  ...node,
-                  optionsTarget: {
-                    ...node.optionsTarget,
-                    [optionNum]: targetNode.data.label
+                    ...node,
+                    optionsTarget: {
+                      ...node.optionsTarget,
+                      [optionNum]: targetNode.data.label,
+                    },
                   }
-                }
                 : node;
             }
           } else {
             return node.source === sourceNode.id
               ? { ...node, target: targetNode.data.label }
-              : node
+              : node;
           }
-        }
-        ))
-      const sourceNodeId = sourceNode.hasOwnProperty("parentId") ? sourceNode.parentId : params.source;
+        })
+      );
+      const sourceNodeId = sourceNode.hasOwnProperty("parentId")
+        ? sourceNode.parentId
+        : params.source;
 
       console.log("sourceNodeId in onconnect :: ,", sourceNodeId);
       console.log("Source node in 83 ::", 0);
@@ -182,7 +184,6 @@ function App() {
       return prevNodes;
     });
   }, []);
-
 
   useEffect(() => {
     console.log("last data :: ", lastData);
@@ -213,7 +214,7 @@ function App() {
       const nodeProps = JSON.parse(
         event.dataTransfer.getData("application/reactflow")
       );
-
+      console.log("nodeProps.nodeLabel", nodeProps.nodeLabel);
       if (!nodeProps.nodeType) {
         return;
       }
@@ -273,7 +274,7 @@ function App() {
           newNode.data.label = `Decision-${DecisionCounter.current++}`;
         }
         console.log("nodes from onDrop", nodes);
-      } else if (nodeProps.nodeLabel === 'Menu') {
+      } else if (nodeProps.nodeLabel === "Menu") {
         const newNode = {
           id: getId(),
           type: nodeProps.nodeType,
@@ -283,38 +284,39 @@ function App() {
             width: 50,
             height: 55,
             padding: 5,
-            fontSize: '8px'
-          }
+            fontSize: "8px",
+          },
         };
         setNodes((nds) => nds.concat(newNode));
         var newChildNodes = Array.from({ length: 2 }, (_, index) => ({
           id: generateId(newNode.id, index),
-          type: 'input',
+          type: "input",
           position: {
             x: 30,
-            y: index === 0 ? 15 : 15 + index * 15
+            y: index === 0 ? 15 : 15 + index * 15,
           },
-          data: { label: index === 0 ? 'NI' : "NM" },
-          extent: 'parent',
+          data: { label: index === 0 ? "NI" : "NM" },
+          extent: "parent",
           parentId: newNode.id,
           sourcePosition: "right",
           style: {
             width: 19,
             height: 20,
-            padding: '6px 0px',
-            border: 'none',
-            fontSize: '8px'
+            padding: "6px 0px",
+            border: "none",
+            fontSize: "8px",
           },
           draggable: false,
         }));
         setNodes((nds) => nds.concat(newChildNodes));
         setLastData((prevNodes) => [
-          ...prevNodes, {
+          ...prevNodes,
+          {
             source: newNode.id,
             sourceLabel: newNode.data.label,
-            nodeType: nodeProps.nodeLabel
-          }
-        ])
+            nodeType: nodeProps.nodeLabel,
+          },
+        ]);
       } else {
         const newNode = {
           id: getId(),
@@ -327,7 +329,7 @@ function App() {
             fontSize: "8px",
           },
         };
-
+        console.log("nodeProps.nodeLabel", nodeProps.nodeLabel);
         console.log("newNode before dropped ::", newNode);
         if (nodeProps.nodeLabel === "Menu") {
           newNode.data.label = `Menu-${menuCounter.current++}`;
@@ -476,29 +478,29 @@ function App() {
         } else if (node.nodeType === "Audio") {
           return node.source === id
             ? {
-              ...node,
-              popupDetails: {
-                id,
-                Menuname: value,
-                TexttoSay: textToSay,
-                initialAudio: audioFile ? audioFile.name : "",
-              },
-            }
+                ...node,
+                popupDetails: {
+                  id,
+                  Menuname: value,
+                  TexttoSay: textToSay,
+                  initialAudio: audioFile ? audioFile.name : "",
+                },
+              }
             : node;
         } else if (node.nodeType === "Decision") {
           console.log("node source in decision :", node.source);
           console.log("id in decision :", id);
           return node.source === id
             ? {
-              ...node,
-              popupDetails: {
-                id,
-                Menuname: value,
-                SessionKey: sessionkey,
-                Operation: operation,
-                Value: sessionvalue,
-              },
-            }
+                ...node,
+                popupDetails: {
+                  id,
+                  Menuname: value,
+                  SessionKey: sessionkey,
+                  Operation: operation,
+                  Value: sessionvalue,
+                },
+              }
             : node;
         } else if (node.nodeType === "Application Modifier") {
           console.log("Inside application modifier in app.js");
@@ -510,7 +512,7 @@ function App() {
               popupDetails: {
                 id,
                 SessionData: sessiondata,
-                Operation: method,
+                Operation: operation,
                 StartIndex: startValue,
                 EndIndex: endValue,
                 Concat: concat,
@@ -523,6 +525,7 @@ function App() {
         }
       });
     });
+
     console.log("Last data in app.js ", lastData);
 
     setNodeDetails((prevDetails) => ({
@@ -658,14 +661,21 @@ function App() {
 
   const onNodesDelete = useCallback(
     (deleted) => {
-      setLastData((prevData) => prevData.filter((node) => node.source !== deleted[0].id));
+      setLastData((prevData) =>
+        prevData.filter((node) => node.source !== deleted[0].id)
+      );
       console.log("on node delete :: ", deleted);
-    }, [nodes, edges]
-  )
+    },
+    [nodes, edges]
+  );
 
   const onEdgesDelete = useCallback(
     (edges) => {
       console.log("nodes in edge delete :: ", nodes);
+      // nodes.map((node) => {
+
+      //   console.log("nodes map edge delete :: ", node);
+      // })
       const deletedEdgeSource = nodes.find((node) => node.id === edges[0].source)
       console.log("on edge delete :: ", edges);
       if (deletedEdgeSource.parentId) {
@@ -687,8 +697,9 @@ function App() {
         );
       }
       console.log("deletedEdgeSource :: ", deletedEdgeSource);
-    }, [edges]
-  )
+    },
+    [edges]
+  );
 
   return (
     <ReactFlowProvider>
@@ -737,10 +748,10 @@ function App() {
           SetDecision={SetDecision}
           Decision={Decision}
           setId={setId}
+          handleFileChange={handleFileChange}
           lastData={lastData}
           setLastData={setLastData}
           setAppModifier={setAppModifier}
-          handleFileChange={handleFileChange}
           setMenuAudioFile={setMenuAudioFile}
           menuAudioFile={menuAudioFile}
           setEdges={setEdges}
