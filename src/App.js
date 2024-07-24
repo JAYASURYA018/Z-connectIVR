@@ -3,6 +3,7 @@ import {
   ReactFlowProvider,
   addEdge,
   useNodesState,
+  removeElements,
   useEdgesState,
   updateEdge,
   useStoreApi,
@@ -18,7 +19,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 import "./index.css";
 
-let id = 0;
+let id = 1;
 const getId = () => `${id++}`;
 
 const generateId = (parentId, childId) => {
@@ -43,7 +44,7 @@ const initialNodes = [
 
 function App() {
   const reactFlowWrapper = useRef(null);
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [channel, setChannel] = useState("");
   const [Audionode, SetAudionode] = useState(false);
   const [value, setValue] = useState("");
@@ -83,21 +84,27 @@ function App() {
   const [flowName, setFlowName] = useState("");
   const [savebtn, setSaveBtn] = useState(false);
   // const [sourceId, setSourceId] = useState("");
+  const [apiResponse, setApiResponse] = useState(null);
+  const [url, setURL] = useState(null)
+  const [httpMethod, setHTTPMethod] = useState(null)
   const [audioFile, setAudioFile] = useState(null);
   const [id, setId] = useState("");
   const nodeLabelRef = useRef("");
   const [menuAudioFile, setMenuAudioFile] = useState("");
+  const [projectList, setProjectList] = useState([]);
   const [lastData, setLastData] = useState([
     {
-      source: "0",
+      source: "1",
       nodeType: "Start",
       sourceLabel: "Start",
     },
   ]);
-  console.log("Node details inside onconnect ::", nodeDetails);
+  // console.log("Node details inside onconnect ::", nodeDetails);
 
-  console.log("audioName outside function ::", audioName);
-  console.log("Decision ::", Decision);
+  // console.log("audioName outside function ::", audioName);
+  // console.log("Decision ::", Decision);
+
+
   const onConnect = useCallback((params) => {
     console.log("onConnect triggered with params:", params);
 
@@ -152,6 +159,7 @@ function App() {
                 : node;
             }
           } else {
+
             return node.source === sourceNode.id
               ? { ...node, target: targetNode.data.label }
               : node;
@@ -177,7 +185,7 @@ function App() {
 
         setEdges((prevEdges) => {
           console.log("Adding edge:", edge);
-          return addEdge(edge, prevEdges);
+          return addEdge(edge, prevEdges)
         });
 
         return prevDetails;
@@ -185,6 +193,7 @@ function App() {
 
       return prevNodes;
     });
+    console.log("edges in onconnect :: ", edges)
   }, []);
 
   useEffect(() => {
@@ -316,6 +325,29 @@ function App() {
             nodeType: nodeProps.nodeLabel,
           },
         ]);
+      } else if (nodeProps.nodeLabel === "Start") {
+        var nodeData;
+        setNodes((prevNodes) => nodeData = prevNodes)
+        const startNode = nodeData.filter((node) => node.data.type === 'Start');
+        if (startNode.length > 0) {
+          toast.error(
+            `Start node already exists.`
+          );
+        } else {
+          const newNode = {
+            id: getId(),
+            type: nodeProps.nodeType,
+            position,
+            data: { label: nodeProps.nodeLabel, type: nodeProps.nodeLabel },
+            style: {
+              width: 50,
+              padding: 5,
+              fontSize: "8px",
+            },
+          };
+          setNodes((nds) => nds.concat(newNode));
+        }
+
       } else {
         const newNode = {
           id: getId(),
@@ -422,9 +454,120 @@ function App() {
     setSaveBtn(false);
   };
 
-  const Popupsave = () => {
+  const Popupsave = async () => {
     setSaveBtn(true);
   };
+
+  const handleRetrieve = async (flowName) => {
+    console.log("click working :: ", flowName)
+    try {
+      const checkResponse = await fetch(
+        "http://localhost:5000/retrieve_flow_data",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ flowName }),
+        }
+      );
+
+      const checkData = await checkResponse.json();
+      console.log("check data :: ", checkData)
+      if (Object.keys(checkData).length > 0) {
+        // toast.error(
+        //   `${flowName} name already exists. Please choose another name.`
+        // );
+        console.log("Response from retrieve api :: ", checkData);
+        console.log("data :: ", JSON.parse(checkData).find((val, key) => val.hasOwnProperty('NodesData')))
+        const retrievedData = JSON.parse(checkData).find((val, key) => val.hasOwnProperty('NodesData'));
+        setLastData(JSON.parse(checkData));
+        setNodes(retrievedData.NodesData);
+        setEdges(retrievedData.EdgesData);
+        menuCounter.current = retrievedData.Counters.menuCounter;
+        audioCounter.current = retrievedData.Counters.PlayPromptCounter;
+        hangupCounter.current = retrievedData.Counters.disconnectCounter;
+        ApplicationModifierCounter.current = retrievedData.Counters.sessionVariableCounter;
+        return;
+      } else {
+        setNodes([
+          {
+            id: getId(),
+            type: "input",
+            data: { label: "Start", type: "Start" },
+            position: { x: 250, y: 5 },
+            style: {
+              width: 50,
+              padding: 5,
+              fontSize: "8px",
+            },
+          },
+        ])
+        menuCounter.current = 1;
+        audioCounter.current = 1;
+        hangupCounter.current = 1;
+        ApplicationModifierCounter.current = 1;
+      }
+    } catch (error) {
+      console.error("Error retrieve flow name:", error);
+      toast.error("Failed to retrieve flow data.");
+      return;
+    }
+  }
+
+  const checkFlowName = async () => {
+    setSaveBtn(false);
+    try {
+      const checkResponse = await fetch(
+        "http://localhost:5000/check-flow-name",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ flowName }),
+        }
+      );
+
+      const checkData = await checkResponse.json();
+      if (checkResponse.ok && checkData.exists) {
+        toast.error(
+          `${flowName} name already exists. Please choose another name.`
+        );
+        return;
+      } else {
+        setNodes([
+          {
+            id: getId(),
+            type: "input",
+            data: { label: "Start", type: "Start" },
+            position: { x: 250, y: 5 },
+            style: {
+              width: 50,
+              padding: 5,
+              fontSize: "8px",
+            },
+          },
+        ])
+        setProjectList((prevData) => [
+          ...prevData,
+          flowName
+        ]);
+        menuCounter.current = 1;
+        audioCounter.current = 1;
+        hangupCounter.current = 1;
+        ApplicationModifierCounter.current = 1;
+      }
+    } catch (error) {
+      console.error("Error checking flow name:", error);
+      toast.error("Failed to check flow name. Please try again.");
+      return;
+    }
+  }
+  useEffect(() => {
+    console.log("edges check :: ", edges);
+    console.log("Nodes check :: ", nodes)
+  })
   const handleFileChange = (e) => {
     e.preventDefault();
     const file = e.target.files[0].File;
@@ -516,6 +659,17 @@ function App() {
               },
             }
             : node;
+        } else if (node.nodeType === "Webhook") {
+          return node.source === id
+            ? {
+              ...node,
+              popupDetails: {
+                id,
+                apiResponse: apiResponse,
+                url: url,
+                httpMethod: httpMethod
+              }
+            } : node
         } else {
           return node;
         }
@@ -570,33 +724,50 @@ function App() {
     }
   };
 
-  const saveFlow = async () => {
-    setSaveBtn(false);
-    try {
-      const checkResponse = await fetch(
-        "http://localhost:5000/check-flow-name",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ flowName }),
-        }
-      );
+  const storeNodeDetails = () => {
+    console.log("edges in storeNode details :: ", edges)
+    setLastData((prevData) => {
+      const index = prevData.findIndex(item => item.NodesData !== undefined);
+      console.log("prevdata in the store nodedetails :: ", prevData);
+      console.log("menu counter :: ", menuCounter);
+      console.log("audio counter :: ", audioCounter);
+      const data = index !== -1
+        ? prevData.map((item, i) => i === index ? { NodesData: nodes, EdgesData: edges, Counters: { menuCounter: menuCounter.current, disconnectCounter: hangupCounter.current, PlayPromptCounter: audioCounter.current, sessionVariableCounter: ApplicationModifierCounter.current } } : item)
+        : [...prevData, { NodesData: nodes, EdgesData: edges, Counters: { menuCounter: menuCounter.current, disconnectCounter: hangupCounter.current, PlayPromptCounter: audioCounter.current, sessionVariableCounter: ApplicationModifierCounter.current } }];
+      saveFlow(data);
+      return data
+    })
+  }
 
-      const checkData = await checkResponse.json();
-      if (checkResponse.ok && checkData.exists) {
-        toast.error(
-          `${flowName} name already exists. Please choose another name.`
-        );
-        return;
-      }
-    } catch (error) {
-      console.error("Error checking flow name:", error);
-      toast.error("Failed to check flow name. Please try again.");
-      return;
-    }
-    console.log("Before sending to API ::", lastData);
+  const saveFlow = async (data) => {
+    setSaveBtn(false);
+
+    // try {
+    //   const checkResponse = await fetch(
+    //     "http://localhost:5000/check-flow-name",
+    //     {
+    //       method: "POST",
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //       },
+    //       body: JSON.stringify({ flowName }),
+    //     }
+    //   );
+
+    //   const checkData = await checkResponse.json();
+    //   if (checkResponse.ok && checkData.exists) {
+    //     toast.error(
+    //       `${flowName} name already exists. Please choose another name.`
+    //     );
+    //     return;
+    //   }
+    // } catch (error) {
+    //   console.error("Error checking flow name:", error);
+    //   toast.error("Failed to check flow name. Please try again.");
+    //   return;
+    // }
+    console.log("Before sending to API last data ::", lastData);
+    console.log("Before sending to API data ::", data);
     try {
       const response = await fetch("http://localhost:5000/save-flow", {
         method: "POST",
@@ -605,7 +776,7 @@ function App() {
         },
         body: JSON.stringify({
           flowName,
-          lastData,
+          lastData: data,
         }),
       });
       if (flowName === "") {
@@ -674,25 +845,30 @@ function App() {
       // })
       const deletedEdgeSource = nodes.find((node) => node.id === edges[0].source)
       console.log("on edge delete :: ", edges);
-      if (deletedEdgeSource.parentId) {
-        const label = deletedEdgeSource.data.label;
-        setLastData(prevData =>
-          prevData.map(node => {
-            if (node.source === deletedEdgeSource.parentId) {
-              const { [label]: _, ...updatedDecisionTarget } = node.nodeType === 'Menu' ? node.optionsTarget : node.decisionTarget;
-              return node.nodeType === 'Menu' ? { ...node, optionsTarget: updatedDecisionTarget } : { ...node, decisionTarget: updatedDecisionTarget };
-            }
-            return node;
-          })
-        );
-      } else {
-        setLastData(prevData =>
-          prevData.map(node => {
-            return node.source === deletedEdgeSource.id ? { ...node, target: "" } : node;
-          })
-        );
-      }
       console.log("deletedEdgeSource :: ", deletedEdgeSource);
+
+      edges?.map((edge) => {
+        const deletedEdgeSource = nodes.find((node) => node.id === edge.source)
+        if (deletedEdgeSource.parentId) {
+          const label = deletedEdgeSource.data.label;
+          setLastData(prevData =>
+            prevData.map(node => {
+              if (node.source === deletedEdgeSource.parentId) {
+                const { [label]: _, ...updatedDecisionTarget } = node.nodeType === 'Menu' ? node.optionsTarget : node.decisionTarget;
+                return node.nodeType === 'Menu' ? { ...node, optionsTarget: updatedDecisionTarget } : { ...node, decisionTarget: updatedDecisionTarget };
+              }
+              return node;
+            })
+          );
+        } else {
+          setLastData(prevData =>
+            prevData.map(node => {
+              return node.source === deletedEdgeSource.id ? { ...node, target: "" } : node;
+            })
+          );
+        }
+      })
+      // console.log("deletedEdgeSource :: ", deletedEdgeSource);
     },
     [edges]
   );
@@ -704,14 +880,20 @@ function App() {
           <Navigator
             savebtn={savebtn}
             Popupsave={Popupsave}
+            storeNodeDetails={storeNodeDetails}
+            handleRetrieve={handleRetrieve}
+            saveFlow={saveFlow}
             isDraftSaved={isDraftSaved}
+            projectList={projectList}
             DeployFlow={DeployFlow}
             setIsDraftSaved={setIsDraftSaved}
+            flowName={flowName}
           />
           <Elements onDragStart={onDragStart} />
         </div>
         <div className="main-content-wrapper" ref={reactFlowWrapper}>
           <Maincontent
+            checkFlowName={checkFlowName}
             savebtn={savebtn}
             nodes={nodes}
             edges={edges}
@@ -736,6 +918,12 @@ function App() {
         </div>
 
         <ElementConfiguration
+          httpMethod={httpMethod}
+          setHTTPMethod={setHTTPMethod}
+          url={url}
+          setURL={setURL}
+          apiResponse={apiResponse}
+          setApiResponse={setApiResponse}
           selectedNodeData={selectedNodeData}
           showPopup={showPopup}
           setShowPopup={setShowPopup}
