@@ -1,4 +1,5 @@
 import React from "react";
+import "./index.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHouseSignal,
@@ -22,7 +23,8 @@ function Elements({ onDragStart }) {
           }
           draggable
         >
-          <FontAwesomeIcon className="StartIcon" icon={faHouseSignal} /> Start
+          <FontAwesomeIcon className="StartIcon" icon={faHouseSignal} />Start
+          {/* <button className="saveflowpopup">Start</button> */}
         </div>
         <div
           className="dndnode"
@@ -32,6 +34,7 @@ function Elements({ onDragStart }) {
           draggable
         >
           <FontAwesomeIcon className="MenuIcon" icon={faBars} /> Menu
+          {/* <button className="saveflowpopup">Menu</button> */}
         </div>
         <div
           className="dndnode"
@@ -52,7 +55,7 @@ function Elements({ onDragStart }) {
           }
           draggable
         >
-          <FontAwesomeIcon className="HangupIcon" icon={faEdit} /> Session Variable 
+          <FontAwesomeIcon className="HangupIcon" icon={faEdit} /> Session Variable
         </div>
         <div
           className="dndnode"

@@ -230,7 +230,7 @@ h3 {
   box-shadow: inset 2px 2px 3px hsla(0, 0%, 87%, .3);
   height: 18px;
   margin-top: 5px;
-  padding: 6px 12px;
+  padding: 4px 8px;
   background-color: #fff;
   border-radius: 0;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
@@ -240,6 +240,7 @@ h3 {
   line-height: 1.42857143;
   color: #222;
   margin-bottom: 5px;
+  width: 25vh;
 }
 
 .TexttosayInputbox {
@@ -250,12 +251,13 @@ h3 {
   color: #666;
   height: 18px;
   margin-top: 5px;
-  padding: 6px 2px;
+  padding: 6px 0px;
   width: 199px;
   border-radius: 0;
   display: block;
   font-size: 14px;
   line-height: 1.42857143;
+  width: 26vh;
 }
 
 .Selectednode {
@@ -271,6 +273,7 @@ h3 {
   text-transform: uppercase;
   letter-spacing: .5px;
   margin-top: 7px;
+  width: 27vh;
 }
 
 .react-flow__node {
@@ -312,15 +315,14 @@ h3 {
   font-size: 12px;
 }
 
-.ElementsAlignment {
+/* .ElementsAlignment {
   margin-left: 15px;
 
-}
+} */
 
 .btns {
   position: relative;
-  top: 13px;
-  /* margin-left: 5px; */
+  margin-top: 10px;
 }
 
 .TTS {
@@ -343,7 +345,6 @@ h3 {
   padding-left: 21px;
   border: 1px solid black;
   margin-right: -7px;
-  overflow-y: auto;
 }
 
 .Initialpopup {
@@ -427,6 +428,7 @@ h3 {
 
 .popup-content {
   height: 62vh !important;
+  overflow-y: scroll;
 }
 
 .popup button:hover {
@@ -447,6 +449,18 @@ h3 {
 
 .dndnode {
   margin-top: 8px;
+  padding: 5px;
+  width: 30vh;
+  text-align: left;
+  padding-left: 10px;
+  background-color: #1585fc;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+}
+
+.dndnode:hover {
+  background-color: #0759b0;
 }
 
 .dndflow .dndnode.input {

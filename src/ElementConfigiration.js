@@ -7,6 +7,12 @@ import "react-toastify/dist/ReactToastify.css";
 import "./index.css";
 
 function ElementConfiguration({
+  httpMethod,
+  setHTTPMethod,
+  url,
+  setURL,
+  apiResponse,
+  setApiResponse,
   setAudioFile,
   audioFile,
   menuAudioFile,
@@ -486,18 +492,58 @@ function ElementConfiguration({
                   {menuselectedOption === "TTS" && (
                     <div>
                       <div className="Texttosay">TEXT TO SAY</div>
+                      <div className="Texttosay">Initial</div>
                       <input
                         className="TexttosayInputbox"
                         type="text"
                         name="myInput"
-                        placeholder="Enter the text to speech"
+                        placeholder="Enter the Initial TTS"
+                        onChange={(e) => setTextToSay(e.target.value)}
+                      />
+                      <div className="Texttosay">NoInput</div>
+                      <input
+                        className="TexttosayInputbox"
+                        type="text"
+                        name="myInput"
+                        placeholder="Enter the NoInput TTS"
+                        onChange={(e) => setTextToSay(e.target.value)}
+                      />
+                      <div className="Texttosay">NoMatch</div>
+                      <input
+                        className="TexttosayInputbox"
+                        type="text"
+                        name="myInput"
+                        placeholder="Enter the NoMatch TTS"
                         onChange={(e) => setTextToSay(e.target.value)}
                       />
                     </div>
                   )}
                   {menuselectedOption === "PROMPT" && (
                     <div>
+                      <div className="Texttosay">Audio File</div>
                       <div className="Texttosay">Initial Audio File</div>
+                      <input
+                        className="AudioUploadInput"
+                        type="file"
+                        accept=".mp3,.wav"
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          setMenuAudioFile(file);
+                          console.log("Selected audio file:", file);
+                        }}
+                      />
+                      <div className="Texttosay">NoInput Audio File</div>
+                      <input
+                        className="AudioUploadInput"
+                        type="file"
+                        accept=".mp3,.wav"
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          setMenuAudioFile(file);
+                          console.log("Selected audio file:", file);
+                        }}
+                      />
+                      <div className="Texttosay">NoMatch Audio File</div>
                       <input
                         className="AudioUploadInput"
                         type="file"
@@ -516,6 +562,15 @@ function ElementConfiguration({
                     options={numbers}
                     placeholder="Select an option"
                     onChange={(e) => setMenuOption(e.value)}
+                  />
+                  <div className="Texttosay">Maxtries</div>
+                  <input
+                    className="TexttosayInputbox"
+                    type="Number"
+                    min={0}
+                    name="myInput"
+                    placeholder="Enter the NoMatch TTS"
+                    onChange={(e) => setTextToSay(e.target.value)}
                   />
                 </div>
                 {/* <div className="Texttosay">Channel</div>
@@ -638,24 +693,54 @@ function ElementConfiguration({
                 )}
               </>
             )}
+            {selectedNodeData.data.type === 'Webhook' &&
+              (
+                <>
+                  <div className="Texttosay">URL</div>
+                  <input
+                    className="TexttosayInputbox"
+                    type="text"
+                    name="myInput"
+                    placeholder={"Enter the complete URL"}
+                    onChange={(e) => setURL(e.target.value)}
+                  />
+                  <div className="Texttosay">HTTP Method</div>
+                  <Dropdown
+                    className="ChannelDropdown"
+                    options={["GET", "POST"]}
+                    placeholder="Select a method"
+                    onChange={(e) => setHTTPMethod(e.value)}
+                  />
+                  <div className="Texttosay">Store Response</div>
+                  <input
+                    className="TexttosayInputbox"
+                    type="text"
+                    name="myInput"
+                    placeholder={"Enter the variable to store response"}
+                    onChange={(e) => setApiResponse(e.target.value)}
+                  />
+                </>
+              )
+
+            }
           </div>
-          <span className="btns">
+          <div className="btns">
             <button className="savebtn" onClick={handleSave}>
               Save
             </button>
             <button className="Closebtn" onClick={Handleclosepopup}>
               Close
             </button>
-          </span>
+          </div>
         </div>
       )}
-      <MiniMap
+      {/* <MiniMap
         className="Minimap"
         nodeColor={(node) => (node.type === "input" ? "#6ede87" : "#ff0072")}
         nodeStrokeWidth={3}
         zoomable
         pannable
-      />
+      /> */}
     </>
   );
 }
