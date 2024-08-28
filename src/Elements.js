@@ -9,80 +9,119 @@ import {
   faDiamond,
   faCircleNodes,
   faEdit,
+  faSignIn,
+  faSignOut
 } from "@fortawesome/free-solid-svg-icons";
-function Elements({ onDragStart }) {
+function Elements({ onDragStart, isProjectSaved }) {
   // console.log("onDragStart in Elements ::",onDragStart)
   return (
     <div className="sidebar-Elements">
-      <h3>Elements Panel</h3>
+      <div className="Project">
+        <h3>Elements Panel</h3>
+      </div>
       <div className="ElementsAlignment">
         <div
-          className="dndnode"
+          className={`dndnode ${!isProjectSaved ? "disabled" : ""}`}
           onDragStart={(event) =>
+            isProjectSaved &&
             onDragStart(event, { nodeLabel: "Start", nodeType: "input" })
           }
-          draggable
+          draggable={isProjectSaved}
         >
-          <FontAwesomeIcon className="StartIcon" icon={faHouseSignal} />Start
+          <FontAwesomeIcon className="StartIcon" icon={faHouseSignal} />
+          Start
           {/* <button className="saveflowpopup">Start</button> */}
         </div>
         <div
-          className="dndnode"
+          className={`dndnode ${!isProjectSaved ? "disabled" : ""}`}
           onDragStart={(event) =>
+            isProjectSaved &&
             onDragStart(event, { nodeLabel: "Menu", nodeType: "output" })
           }
-          draggable
+          draggable={isProjectSaved}
         >
           <FontAwesomeIcon className="MenuIcon" icon={faBars} /> Menu
           {/* <button className="saveflowpopup">Menu</button> */}
         </div>
         <div
-          className="dndnode"
+          className={`dndnode ${!isProjectSaved ? "disabled" : ""}`}
           onDragStart={(event) =>
-            onDragStart(event, { nodeLabel: "Play Prompt", nodeType: "default" })
+            isProjectSaved &&
+            onDragStart(event, {
+              nodeLabel: "Play Prompt",
+              nodeType: "default",
+            })
           }
-          draggable
+          draggable={isProjectSaved}
         >
-          <FontAwesomeIcon className="AudioIcon" icon={faFileAudio} /> Play Prompt
+          <FontAwesomeIcon className="AudioIcon" icon={faFileAudio} /> Play
+          Prompt
         </div>
         <div
-          className="dndnode"
+          className={`dndnode ${!isProjectSaved ? "disabled" : ""}`}
           onDragStart={(event) =>
+            isProjectSaved &&
             onDragStart(event, {
               nodeLabel: "Session Variable",
               nodeType: "default",
             })
           }
-          draggable
+          draggable={isProjectSaved}
         >
-          <FontAwesomeIcon className="HangupIcon" icon={faEdit} /> Session Variable
+          <FontAwesomeIcon className="HangupIcon" icon={faEdit} /> Session
+          Variable
         </div>
         <div
-          className="dndnode"
+          className={`dndnode ${!isProjectSaved ? "disabled" : ""}`}
           onDragStart={(event) =>
+            isProjectSaved &&
             onDragStart(event, { nodeLabel: "Decision", nodeType: "output" })
           }
-          draggable
+          draggable={isProjectSaved}
         >
           <FontAwesomeIcon className="Decision" icon={faDiamond} /> Condition
         </div>
 
         <div
-          className="dndnode"
+          className={`dndnode ${!isProjectSaved ? "disabled" : ""}`}
           onDragStart={(event) =>
-            onDragStart(event, { nodeLabel: "Webhook", nodeType: "Webhook" })
+            isProjectSaved &&
+            onDragStart(event, { nodeLabel: "Webhook", nodeType: "default" })
           }
-          draggable
+          draggable={isProjectSaved}
         >
           <FontAwesomeIcon className="Webhook" icon={faCircleNodes} />
           Webhook
         </div>
         <div
-          className="dndnode"
+          className={`dndnode ${!isProjectSaved ? "disabled" : ""}`}
           onDragStart={(event) =>
+            isProjectSaved &&
+            onDragStart(event, { nodeLabel: "Entry", nodeType: "input" })
+          }
+          draggable={isProjectSaved}
+        >
+          <FontAwesomeIcon className="pageConnectors" icon={faSignIn} />
+          Entry
+        </div>
+        <div
+          className={`dndnode ${!isProjectSaved ? "disabled" : ""}`}
+          onDragStart={(event) =>
+            isProjectSaved &&
+            onDragStart(event, { nodeLabel: "Exit", nodeType: "output" })
+          }
+          draggable={isProjectSaved}
+        >
+          <FontAwesomeIcon className="pageConnectors" icon={faSignOut} />
+          Exit
+        </div>
+        <div
+          className={`dndnode ${!isProjectSaved ? "disabled" : ""}`}
+          onDragStart={(event) =>
+            isProjectSaved &&
             onDragStart(event, { nodeLabel: "Disconnect", nodeType: "output" })
           }
-          draggable
+          draggable={isProjectSaved}
         >
           <FontAwesomeIcon className="HangupIcon" icon={faPhone} /> Disconnect
         </div>
