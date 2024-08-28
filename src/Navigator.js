@@ -2,40 +2,64 @@ import React, { useEffect, useState } from "react";
 import "./index.css";
 import Button from "react-bootstrap/Button";
 
-function Navigator({ handleRetrieve, storeNodeDetails, projectList, Popupsave, saveFlow, isDraftSaved, DeployFlow, flowName }) {
-
+function Navigator({
+  handleRetrieve,
+  storeNodeDetails,
+  isProjectSaved,
+  projectList,
+  Popupsave,
+  activeProject,
+  saveFlow,
+  isDraftSaved,
+  DeployFlow,
+  flowName,
+}) {
   return (
     <>
       <div className="sidebar-Navigator">
-        <h3>Project Explorer</h3>
-        <div>
-          <Button
-            variant="success"
-            className="saveflowpopup"
-            onClick={Popupsave}
-          >
-            New Project
-          </Button>
+        <div className="Project">
+          <h3>Project Explorer</h3>
+          <div>
+            <Button
+              variant="success"
+              className="saveflowpopup"
+              onClick={Popupsave}
+            >
+              New Project
+            </Button>
+          </div>
         </div>
         <div className="Projects">
-          {
-            projectList.map((project) => {
-              return <div onClick={() => handleRetrieve(project)}>{project}</div>
-            })
-          }
+          <ul>
+            {projectList?.map((project) => (
+              <li
+                key={project}
+                className={`ProjectList ${activeProject === project ? "active" : ""
+                  }`}
+                onMouseOver={(e) => e.currentTarget.classList.add("hover")}
+                onMouseOut={(e) => e.currentTarget.classList.remove("hover")}
+                onDoubleClick={() => handleRetrieve(project)}
+              >
+                {project}
+              </li>
+            ))}
+          </ul>
         </div>
         {/* <button className='Savebtn' onClick={saveFlow}>SAVE</button> */}
 
         <div className="Projectbtns">
           <Button
             variant="success"
-            className="saveflowpopup"
+            className={`saveflowpopup ${!isProjectSaved ? "disabled" : ""}`}
             onClick={() => {
-              storeNodeDetails(); 
+              if (isProjectSaved) {
+                storeNodeDetails();
+              }
             }}
           >
             Save Draft
           </Button>
+
           <Button
             variant="success"
             disabled={!isDraftSaved}
