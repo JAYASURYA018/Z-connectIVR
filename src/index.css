@@ -9,9 +9,58 @@ body {
   font-style: normal;
 }
 
+.EnablelingText {
+  margin-top: 13px;
+}
+
+.Checkboxcontainer {
+  display: grid;
+  grid-template-columns: 89px 148px;
+}
+
+/* svg[AttributesStyle] {
+  width: 250 !important;
+  height: 150;
+} */
+.EnablingMinimap {
+  font-size: 18px;
+
+  text-align: center;
+  font-weight: 600;
+}
+
+.Project {
+  background-color: #4C4743;
+  height: 45px;
+}
+
+.ProjectSS {
+  background-color: #4C4743;
+  height: 49px;
+
+}
+
+.ProjecrExplorer {
+  padding-right: 5px;
+}
+
+/* .Project {
+  background-color: #00e5d4;
+  height: 45px;
+} */
+
+.Checkboxminimap {
+  width: 199px !important;
+  margin-top: 8px;
+  margin-left: 23px;
+  height: 42px !important;
+}
+
 .Projects {
-  height: 240px;
+  height: 195px;
   padding-bottom: 10px;
+  padding-left: 9px;
+  margin-top: 54px;
   scroll-behavior: auto;
 }
 
@@ -90,6 +139,21 @@ body {
   color: #222;
 }
 
+.Warningmessage {
+  padding-left: 10px
+}
+
+.ImportantNotice {
+  font-size: 19px;
+
+  padding: 10px;
+
+}
+
+.PopupButtonss {
+  margin-top: 37px;
+}
+
 .SavePopup {
   height: 200px;
   width: 300px;
@@ -102,12 +166,25 @@ body {
   border-radius: 8px;
 }
 
+.SavePopups {
+  height: 200px;
+  width: 300px;
+
+  position: absolute;
+  background-color:
+    #f2dbd2;
+  z-index: 10;
+  left: 350px;
+  top: 210px;
+  border-radius: 8px;
+}
+
 .grid-container {
   display: grid;
   grid-template-columns: 35vh 3fr 35vh;
   grid-template-rows: 100vh;
   gap: 5px;
-  background-color: #2196F3;
+  background-color: #a8a8a8;
   padding: 5px;
   height: 98vh;
   box-sizing: border-box;
@@ -122,7 +199,7 @@ body {
 
 .sidebar-Navigator,
 .sidebar-Elements {
-  padding: 10px;
+  /* padding: 10px; */
   background-color: #f6f6f6;
   overflow-y: auto;
   margin-bottom: 5px;
@@ -168,6 +245,11 @@ body {
   padding-right: 5px;
 }
 
+.pageConnectors {
+  height: 15px;
+  padding-right: 5px;
+}
+
 body .main-content {
   background-color: #f0f0f0;
   padding: 8px;
@@ -178,24 +260,38 @@ body .main-content {
   border-radius: 6px;
 }
 
-body .main-content::-webkit-scrollbar {
-  width: 20px;
+body .main-content-initital {
+  background-color: #f0f0f0;
+  padding: 8px;
+  overflow-y: auto;
+  grid-column: 2 / 3;
+  height: 84vh;
+  border: 1px solid black;
+  border-radius: 6px;
 }
 
-body .main-content::-webkit-scrollbar-track {
+/* body .main-content::-webkit-scrollbar {
+  width: 20px;
+} */
+
+/* body .main-content::-webkit-scrollbar-track {
   box-shadow: inset 0 0 5px grey;
   border-radius: 10px;
   background: #f0f0f0;
-}
+} */
 
-body .main-content::-webkit-scrollbar-thumb {
+/* body .main-content::-webkit-scrollbar-thumb {
   background: red;
   border-radius: 10px;
-}
+} */
 
 
 h3 {
   margin-top: 0;
+  padding-top: 10px;
+  padding-left: 36px;
+  font-size: 21px;
+  color: white;
 }
 
 .dndflow {
@@ -262,7 +358,10 @@ h3 {
 
 .Selectednode {
   font-weight: 700;
-  font-size: 16px;
+  font-size: 17px;
+  padding-top: 5px;
+  text-align: center;
+  color: white;
 }
 
 .ChannelDropdown {
@@ -298,7 +397,7 @@ h3 {
 }
 
 .Minimap {
-  width: 240px;
+  width: 240px !important;
   border: 1px solid black;
   height: 160px;
   background-color: rgba(255, 255, 255, 0.5);
@@ -319,10 +418,17 @@ h3 {
   margin-left: 15px;
 
 } */
+.Revisedbtns {
+  position: relative;
+
+  margin-left: 32px;
+}
 
 .btns {
   position: relative;
   margin-top: 10px;
+  margin-left: 32px;
+  /* padding-bottom: 19px; */
 }
 
 .TTS {
@@ -333,23 +439,93 @@ h3 {
   display: block;
   border-radius: 5px;
 
+  width: 241px;
+  height: 160px;
+
+
+}
+
+.PopupdetailsContainer {
+  padding-left: 26px;
+  padding-top: 8px;
+}
+
+.Revisedpopup {
+
+  height: 89vh !important;
+  border-radius: 6px;
+  background-color: #f6f6f6;
+  width: 243px;
+  margin-bottom: 3px;
+  border: 1px solid black;
+  margin-right: -7px;
+
+}
+
+.minimapContainer {
+  background-color: #f6f6f6;
+  height: 42px;
+  border: 1px solid black;
+  width: 241px;
+  border-radius: 7px;
 }
 
 .popup {
   /* height: 48vh; */
-  height: 70vh !important;
+  height: 65.5vh !important;
   border-radius: 6px;
   background-color: #f6f6f6;
-  width: 215px;
-  padding: 6px;
-  padding-left: 21px;
+  width: 243px;
+  margin-bottom: 2px;
+
   border: 1px solid black;
   margin-right: -7px;
 }
 
-.Initialpopup {
-  height: 70vh;
+.popup button {
+
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  /* transition: background-color 0.1s ease; */
+}
+
+.Revisedpopup button {
+  padding: 8px 14px;
+  background-color: #3CC339;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  /* transition: background-color 0.1s ease; */
+}
+
+.RevisedInitialpopup {
+  height: 87.5vh;
   font-size: 13px;
+  border-radius: 6px;
+  margin-bottom: 3px;
+  background-color: #f6f6f6;
+  width: 220px;
+  padding: 6px;
+  padding-left: 15px;
+  border: 1px solid black;
+  margin-right: -7px;
+  overflow-y: auto;
+}
+
+.Revisedpopup-content {
+  height: 82vh !important;
+  overflow-y: scroll;
+}
+
+
+.Initialpopup {
+  height: 63.5vh;
+  font-size: 13px;
+  margin-bottom: 3px;
   border-radius: 6px;
   background-color: #f6f6f6;
   width: 220px;
@@ -367,8 +543,7 @@ h3 {
 }
 
 .Closebtn {
-
-  margin-left: 73px;
+  margin-left: 64px;
   background-color: red !important;
 
 }
@@ -388,18 +563,57 @@ h3 {
   border-radius: 5px;
 }
 
+.ProjectList {
+  cursor: pointer;
+  color: black;
+  transition: color 0.3s;
+}
+
+.ProjectList.active {
+  color: #308df0;
+  /* Change color to yellow when active */
+}
+
+li {
+  padding-top: 5px;
+}
+
+.ProjectList:hover {
+  color: #308df0;
+  /* Change color to red when hovered */
+}
+
+.ProjectList:not(.active):not(:hover) {
+  color: black;
+  /* Keep color black when not active or hovered */
+}
+
+.saveflowpopup.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .saveflowpopup {
-  background-color: #007bff;
+  background-color: #1CD6BF;
   color: white;
   /* height: 30px; */
 
-  margin-left: 17px;
+  margin-left: 31px;
   font-size: 14px;
   border: none;
   padding: 8px 10px;
   font-weight: 500;
   /* width: 90x; */
   border-radius: 5px;
+}
+
+.Projectbtns .saveflowpopup {
+  background-color: #3CC339;
+}
+
+.PopupButtons .saveflowpopup {
+  background-color: #3CC339;
 }
 
 
@@ -417,22 +631,33 @@ h3 {
 }
 
 .popup button {
-  padding: 8px 15px;
   background-color: #007bff;
   color: white;
   border: none;
+  height: 29px;
+  width: 56px;
+  margin-bottom: 16px;
   border-radius: 5px;
   cursor: pointer;
   /* transition: background-color 0.1s ease; */
 }
 
+
+
 .popup-content {
-  height: 62vh !important;
+  height: 58vh !important;
   overflow-y: scroll;
 }
 
 .popup button:hover {
   background-color: #0056b3;
+}
+
+.dndnode.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+  cursor: not-allowed;
+
 }
 
 .dndflow .dndnode {
@@ -450,21 +675,22 @@ h3 {
 .dndnode {
   margin-top: 8px;
   padding: 5px;
-  width: 30vh;
+  width: 28vh;
+  margin-left: 8px;
   text-align: left;
   padding-left: 10px;
-  background-color: #1585fc;
+  background-color: #FD7B38;
   border-radius: 5px;
   color: white;
   cursor: pointer;
 }
 
 .dndnode:hover {
-  background-color: #0759b0;
+  background-color: #fc5b0a;
 }
 
 .dndflow .dndnode.input {
-  border-color: #0041d0;
+  border-color: #FD7B38;
 }
 
 .dndflow .dndnode.output {
@@ -478,4 +704,77 @@ h3 {
 
 .dndflow .selectall {
   margin-top: 10px;
+}
+
+.PageBox {
+  border: 1px solid black;
+  /* border-bottom: 0px; */
+  padding: 4px;
+  width: 90px;
+  /* border-radius: 0px 40px 0px 0px; */
+  cursor: pointer;
+  background-color: #d5d5d5;
+  border-color: #686868;
+  display: flex;
+}
+
+.pageBoxList {
+  display: flex;
+  overflow-x: scroll;
+  width: 980px;
+  border: 1px solid black;
+}
+
+.addPage {
+  /* height: 21px; */
+  margin-left: 3px;
+  cursor: pointer;
+  color: black;
+  border-radius: 8px 0px 8px 0px;
+  font-size: 17px;
+  background-color: #d5d5d5;
+}
+
+.PageBox-active {
+  border: 1px solid black;
+  /* border-bottom: 0px; */
+  padding: 4px;
+  width: 90px;
+  /* border-radius: 0px 40px 0px 0px; */
+  cursor: pointer;
+  background-color: white;
+  color: black;
+  border-color: #686868;
+  display: flex;
+}
+
+.closePage {
+  margin-left: 2px;
+  margin-top: 2px;
+  color: #fe6a6a;
+  height: 13px;
+  z-index: 1;
+  cursor: pointer;
+}
+
+/* .PageBox i.fa{
+  padding-left: 8px;
+} */
+.currProject {
+  border: 1px solid black;
+  padding: 2px 8px;
+  border-radius: 0px 15px 0px 0px;
+  background-color: #efeded;
+  width: 8%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.editPage {
+  margin-left: 12px;
+  margin-top: 2px;
+  height: 13px;
+  z-index: 1;
+  color: #3ca3f2;
 }
