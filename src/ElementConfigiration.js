@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
+import Switch from "react-switch";
 import { MiniMap } from "reactflow";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -13,9 +14,27 @@ function ElementConfiguration({
   setURL,
   apiResponse,
   setApiResponse,
+  setRequest,
+  request,
+  checked,
+  handleChanges,
+  setChecked,
+  // checked,
   setAudioFile,
+  maxtries,
+  maxtriesAudio,
+  setMaxtriesAudio,
+  nomatch,
+  setNomatch,
+  noinput,
+  setNodeDetails,
+  nodeDetails,
+  setMaxtries,
+  setNoinput,
   audioFile,
   menuAudioFile,
+  setPlayprompt,
+  playprompt,
   setMenuAudioFile,
   setEdges,
   setLastData,
@@ -43,6 +62,8 @@ function ElementConfiguration({
   selectedNodeData,
   showPopup,
   setShowPopup,
+  setAudioNomatch,
+  setAudioNoinput,
   nodes,
   setNodes,
   popupHeight,
@@ -69,6 +90,9 @@ function ElementConfiguration({
   Setsessionvalue,
   Decision,
   setMenuOption,
+  setPageEntry,
+  pageEntry,
+  pageEntryList
 }) {
   const methods = [
     "slice",
@@ -81,6 +105,7 @@ function ElementConfiguration({
   ];
 
   console.log("menuAudioFile", menuAudioFile.name);
+  console.log("httpMethod", httpMethod);
 
   const handleSave = () => {
     if (!id.trim() || !value.trim()) {
@@ -88,22 +113,40 @@ function ElementConfiguration({
       return;
     }
 
-    if (Menunode && !menuOption) {
-      toast.error("Select Menu Option.");
-      return;
-    }
-
     if (selectedNodeData) {
       const { type } = selectedNodeData.data;
 
-      if (type === "Menu" && !menuAudioFile && !textToSay) {
-        toast.error("Please upload an audio file or enter text to speech.");
-        return;
+      if (type === "Menu") {
+        if (menuselectedOption === "TTS" && !textToSay) {
+          toast.error("Please enter the inital TTS");
+          return;
+        }
+        if (menuselectedOption === "PROMPT" && !menuAudioFile) {
+          toast.error("Please select the initial audio file");
+          return;
+        }
+        if (!menuOption) {
+          toast.error("Select Menu Option.");
+          return;
+        }
+        if (!maxtries) {
+          toast.error("Please enter the maxtries value");
+          return;
+        }
+        if (!maxtriesAudio) {
+          toast.error("Please enter the maxtriesAudio value");
+          return;
+        }
       }
 
-      if (type === "Audio" && !audioFile && !textToSay) {
-        toast.error("Please upload an audio file or enter text to speech.");
-        return;
+      if (type === "Play Prompt") {
+        if (selectedOption === "tts" && !playprompt) {
+          toast.error("Please enter text to speech.");
+          return;
+        } else if (selectedOption === "prompt" && !audioFile) {
+          toast.error("Please upload an audio ");
+          return;
+        }
       }
 
       if (type === "Decision") {
@@ -121,7 +164,19 @@ function ElementConfiguration({
         }
       }
 
-      if (type === "Application Modifier") {
+      if (type === "Webhook") {
+        if (!url) {
+          toast.error("Please enter the URL.");
+          return;
+        }
+
+        if (!apiResponse) {
+          toast.error("Please enter the value for store response.");
+          return;
+        }
+      }
+
+      if (type === "Session Variable") {
         if (!sessiondata) {
           toast.error("Please enter the session data.");
           return;
@@ -163,13 +218,82 @@ function ElementConfiguration({
           return;
         }
       }
+      if (type === 'Exit') {
+        if (!pageEntry) {
+          toast.error("Please select the entry node.");
+          return;
+        }
+      }
     }
 
     handleSaveMenuNode();
+    Setinitialpopup(true);
+    setShowPopup(false);
   };
 
   console.log("sessionkey ::", sessionkey);
   console.log("sessionvalue ::", sessionvalue);
+
+  useEffect(() => {
+    if (selectedNodeData) {
+      const nodeId = selectedNodeData.id;
+      console.log("Node id in useeffect ::", nodeId);
+      console.log("nodeDetails[nodeId]", nodeDetails[nodeId]);
+      if (!nodeDetails[nodeId]) {
+        // Initialize node details for a new node
+        setNodeDetails((prevDetails) => ({
+          ...prevDetails,
+          [nodeId]: {
+            // setValue: "",
+            // setTextToSay: "",
+            // setNoinput: "",
+            // setNomatch: "",
+            // setMenuOption: "",
+            // setMaxtries: "",
+            // setPlayprompt: "",
+            // Setsessionkey: "",
+            // Setoperation: "",
+            // Setsessionvalue: "",
+            // setSessionData: "",
+            // setMethod: "",
+            // setStartValue: "",
+            // setEndValue: "",
+            // Setassign: "",
+            // setconcat: "",
+            // setURL: "",
+            // setApiResponse: "",
+          },
+        }));
+      } else {
+        // Populate input fields for an existing node
+
+        console.log("nodeDetails[nodeId]?.maxtries ", nodeDetails[nodeId]);
+        setValue(nodeDetails[nodeId]?.Menuname ?? "");
+        setTextToSay(nodeDetails[nodeId]?.TexttoSay ?? "");
+        setNoinput(nodeDetails[nodeId]?.NoinputTTS ?? "");
+        setNomatch(nodeDetails[nodeId]?.NomatchTTS ?? "");
+        setMenuOption(nodeDetails[nodeId]?.menuoptions ?? "");
+        setMaxtries(nodeDetails[nodeId]?.maxTries ?? "");
+        setPlayprompt(nodeDetails[nodeId]?.playprompt ?? "");
+        Setsessionkey(nodeDetails[nodeId]?.SessionKey ?? "");
+        Setoperation(nodeDetails[nodeId]?.ConditionOperation ?? "");
+        Setsessionvalue(nodeDetails[nodeId]?.Value ?? "");
+        setSessionData(nodeDetails[nodeId]?.SessionData ?? "");
+        setMethod(nodeDetails[nodeId]?.Operation ?? "");
+
+        setStartValue(nodeDetails[nodeId]?.StartIndex ?? "");
+        setEndValue(nodeDetails[nodeId]?.EndIndex ?? "");
+        Setassign(nodeDetails[nodeId]?.Assign ?? "");
+        setconcat(nodeDetails[nodeId]?.Operation ?? "");
+        setURL(nodeDetails[nodeId]?.url ?? "");
+        setApiResponse(nodeDetails[nodeId]?.apiResponse ?? "");
+        setMaxtries(nodeDetails[nodeId]?.Maxtries ?? "");
+        setMaxtriesAudio(nodeDetails[nodeId]?.MaxtriesTTS);
+        setMenuAudioFile(nodeDetails[nodeId]?.menuAudioFile ?? "");
+        setPageEntry(nodeDetails[nodeId]?.pageEntry ?? "");
+      }
+    }
+  }, [selectedNodeData]);
   useEffect(() => {
     if (selectedNodeData) {
       setId(selectedNodeData.id);
@@ -268,8 +392,10 @@ function ElementConfiguration({
         });
       } else if (numNodes > childNodes.length - 2) {
         const diff = numNodes - (childNodes.length - 2);
-        let lastChildId = Number(((childNodes[childNodes.length - 1].id).replace("c", "")).split("")[1]);
-        const lastChild_Y_Pos = (childNodes[childNodes.length - 1].position).y;
+        let lastChildId = Number(
+          childNodes[childNodes.length - 1].id.replace("c", "").split("")[1]
+        );
+        const lastChild_Y_Pos = childNodes[childNodes.length - 1].position.y;
         console.log("lastchil id :: ", lastChildId);
         const newNodes = Array.from({ length: diff }, (_, index) => ({
           id: generateId(currNode.id, lastChildId + index),
@@ -383,17 +509,27 @@ function ElementConfiguration({
 
   return (
     <>
-      <ToastContainer className="Toastcontainer" />
-      {initialPopup && (
-        <div className="Initialpopup">No Configurable Elements Selected.</div>
-      )}
-      {showPopup && selectedNodeData && (
-        <div className="popup" style={{ height: popupHeight }}>
-          <div className="popup-content">
-            <h3 className="Selectednode">
-              Properties of {selectedNodeData.data.label}
-            </h3>
-            {/* <div className="Nodename">NODE ID</div>
+      <div className="RightContainer">
+        <ToastContainer className="Toastcontainer" />
+        {initialPopup && (
+          <div className={checked ? "Initialpopup" : "RevisedInitialpopup"}>
+            No Configurable Elements Selected.
+          </div>
+        )}
+        {showPopup && selectedNodeData && (
+          <div
+            className={checked ? "popup" : "Revisedpopup"}
+            style={{ height: popupHeight }}
+          >
+            <div
+              className={checked ? "popup-content" : "Revisedpopup-content "}
+            >
+              <div className="ProjectSS">
+                <div className="Selectednode">
+                  Properties of {selectedNodeData.data.label}
+                </div>
+              </div>
+              {/* <div className="Nodename">NODE ID</div>
             <input
               className="Inputbox"
               type="text"
@@ -402,178 +538,201 @@ function ElementConfiguration({
               placeholder="node id"
               onChange={(e) => setId(e.target.value)}
             /> */}
-            <div className="Nodename">NODE NAME</div>
-            <input
-              className="Inputbox"
-              type="text"
-              name="myInput"
-              placeholder="Enter the node name"
-              value={value}
-              onChange={handleChange}
-            />
-            {selectedNodeData.data.type === "Play Prompt" && (
-              <div>
-                <div className="Radiobtn">
-                  <label className="TTSRadioBtn">
-                    <input
-                      type="radio"
-                      value="tts"
-                      checked={selectedOption === "tts"}
-                      onChange={() => setSelectedOption("tts")}
-                    />
-                    TTS
-                  </label>
-                  <label>
-                    <input
-                      type="radio"
-                      value="prompt"
-                      checked={selectedOption === "prompt"}
-                      onChange={() => setSelectedOption("prompt")}
-                    />
-                    Prompt
-                  </label>
-                </div>
-                {selectedOption === "tts" && (
-                  <div>
-                    <div className="Texttosay">TEXT TO Speech</div>
-                    <input
-                      className="TexttosayInputbox"
-                      type="text"
-                      name="myInput"
-                      placeholder="Enter the text to speech"
-                      value={textToSay}
-                      onChange={(e) => setTextToSay(e.target.value)}
-                    />
-                  </div>
-                )}
-                {selectedOption === "prompt" && (
-                  <div>
-                    <div className="Texttosay">Upload Audio File</div>
-                    <input
-                      className="AudioUploadInput"
-                      type="file"
-                      accept=".mp3,.wav"
-                      onChange={(e) => {
-                        const file = e.target.files[0];
-                        setAudioFile(file);
-                        console.log("Selected audio file:", file);
-                      }}
-                    />
-                  </div>
-                )}
-              </div>
-            )}
-
-            {Menunode && (
-              <>
-                <div>
+              <div className="PopupdetailsContainer">
+                <div className="Nodename">NODE NAME</div>
+                <input
+                  className="Inputbox"
+                  type="text"
+                  name="myInput"
+                  value={value}
+                  placeholder="Enter the node name"
+                  onChange={handleChange}
+                />
+                {selectedNodeData.data.type === "Play Prompt" && (
                   <div>
                     <div className="Radiobtn">
                       <label className="TTSRadioBtn">
                         <input
                           type="radio"
-                          value="TTS"
-                          checked={menuselectedOption === "TTS"}
-                          onChange={() => setMenuSelectedOption("TTS")}
+                          value="tts"
+                          checked={selectedOption === "tts"}
+                          onChange={() => setSelectedOption("tts")}
                         />
                         TTS
                       </label>
                       <label>
                         <input
                           type="radio"
-                          value="PROMPT"
-                          checked={menuselectedOption === "PROMPT"}
-                          onChange={() => setMenuSelectedOption("PROMPT")}
+                          value="prompt"
+                          checked={selectedOption === "prompt"}
+                          onChange={() => setSelectedOption("prompt")}
                         />
                         Prompt
                       </label>
                     </div>
+                    {selectedOption === "tts" && (
+                      <div>
+                        <div className="Texttosay">TEXT TO Speech</div>
+                        <input
+                          className="TexttosayInputbox"
+                          type="text"
+                          name="myInput"
+                          placeholder="Enter the text to speech"
+                          value={playprompt || ""}
+                          // value={nodeDetails[selectedNodeData.id]?.playprompt}
+                          onChange={(e) => setPlayprompt(e.target.value)}
+                        />
+                      </div>
+                    )}
+                    {selectedOption === "prompt" && (
+                      <div>
+                        <div className="Texttosay">Upload Audio File</div>
+                        <input
+                          className="AudioUploadInput"
+                          type="file"
+                          accept=".mp3,.wav"
+                          onChange={(e) => {
+                            const file = e.target.files[0];
+                            setAudioFile(file);
+                            console.log("Selected audio file:", file);
+                          }}
+                        />
+                      </div>
+                    )}
                   </div>
-                  {menuselectedOption === "TTS" && (
+                )}
+
+                {Menunode && (
+                  <>
                     <div>
-                      <div className="Texttosay">TEXT TO SAY</div>
-                      <div className="Texttosay">Initial</div>
-                      <input
-                        className="TexttosayInputbox"
-                        type="text"
-                        name="myInput"
-                        placeholder="Enter the Initial TTS"
-                        onChange={(e) => setTextToSay(e.target.value)}
+                      <div>
+                        <div className="Radiobtn">
+                          <label className="TTSRadioBtn">
+                            <input
+                              type="radio"
+                              value="TTS"
+                              checked={menuselectedOption === "TTS"}
+                              onChange={() => setMenuSelectedOption("TTS")}
+                            />
+                            TTS
+                          </label>
+                          <label>
+                            <input
+                              type="radio"
+                              value="PROMPT"
+                              checked={menuselectedOption === "PROMPT"}
+                              onChange={() => setMenuSelectedOption("PROMPT")}
+                            />
+                            Prompt
+                          </label>
+                        </div>
+                      </div>
+                      {menuselectedOption === "TTS" && (
+                        <div>
+                          <div className="Texttosay">TEXT TO SAY</div>
+                          <div className="Texttosay">Initial</div>
+                          <input
+                            className="TexttosayInputbox"
+                            type="text"
+                            name="myInput"
+                            value={textToSay || ""}
+                            // value={nodeDetails[selectedNodeData.id]?.TexttoSay}
+                            placeholder="Enter the Initial TTS"
+                            onChange={(e) => setTextToSay(e.target.value)}
+                          />
+                          <div className="Texttosay">NoInput</div>
+                          <input
+                            className="TexttosayInputbox"
+                            type="text"
+                            // value={nodeDetails[selectedNodeData.id]?.NoinputTTS}
+                            value={noinput || ""}
+                            name="myInput"
+                            placeholder="Enter the NoInput TTS"
+                            onChange={(e) => setNoinput(e.target.value)}
+                          />
+                          <div className="Texttosay">NoMatch</div>
+                          <input
+                            className="TexttosayInputbox"
+                            type="text"
+                            value={nomatch || ""}
+                            // value={nodeDetails[selectedNodeData.id]?.NomatchTTS}
+                            name="myInput"
+                            placeholder="Enter the NoMatch TTS"
+                            onChange={(e) => setNomatch(e.target.value)}
+                          />
+                          <div className="Texttosay">MaxTries</div>
+                          <input
+                            className="TexttosayInputbox"
+                            type="text"
+                            value={maxtriesAudio || ""}
+                            // value={nodeDetails[selectedNodeData.id]?.NomatchTTS}
+                            name="myInput"
+                            placeholder="Enter the MaxTries TTS"
+                            onChange={(e) => setMaxtriesAudio(e.target.value)}
+                          />
+                        </div>
+                      )}
+                      {menuselectedOption === "PROMPT" && (
+                        <div>
+                          <div className="Texttosay">Audio File</div>
+                          <div className="Texttosay">Initial Audio File</div>
+                          <input
+                            className="AudioUploadInput"
+                            type="file"
+                            accept=".mp3,.wav"
+                            // value={menuAudioFile?.initialAudio?.Audioname || ""}
+                            onChange={(e) => {
+                              const file = e.target.files[0];
+                              setMenuAudioFile(file);
+                              console.log("Selected audio file:", file);
+                            }}
+                          />
+                          <div className="Texttosay">NoInput Audio File</div>
+                          <input
+                            className="AudioUploadInput"
+                            type="file"
+                            accept=".mp3,.wav"
+                            onChange={(e) => {
+                              const file = e.target.files[0];
+                              setAudioNoinput(file);
+                              console.log("Selected audio file:", file);
+                            }}
+                          />
+                          <div className="Texttosay">NoMatch Audio File</div>
+                          <input
+                            className="AudioUploadInput"
+                            type="file"
+                            accept=".mp3,.wav"
+                            onChange={(e) => {
+                              const file = e.target.files[0];
+                              setAudioNomatch(file);
+                              console.log("Selected audio file:", file);
+                            }}
+                          />
+                        </div>
+                      )}
+                      <div className="Texttosay">MENU OPTIONS</div>
+                      <Dropdown
+                        className="ChannelDropdown"
+                        options={numbers}
+                        value={menuOption || ""}
+                        // value={nodeDetails[selectedNodeData.id]?.menuoptions}
+                        placeholder="Select an option"
+                        onChange={(e) => setMenuOption(e.value)}
                       />
-                      <div className="Texttosay">NoInput</div>
+                      <div className="Texttosay">Maxtries</div>
                       <input
                         className="TexttosayInputbox"
-                        type="text"
+                        type="Number"
+                        min={0}
+                        value={maxtries || ""}
                         name="myInput"
-                        placeholder="Enter the NoInput TTS"
-                        onChange={(e) => setTextToSay(e.target.value)}
-                      />
-                      <div className="Texttosay">NoMatch</div>
-                      <input
-                        className="TexttosayInputbox"
-                        type="text"
-                        name="myInput"
-                        placeholder="Enter the NoMatch TTS"
-                        onChange={(e) => setTextToSay(e.target.value)}
+                        // value={nodeDetails[selectedNodeData.id]?.Maxtries}
+                        placeholder="Enter the maxtries value"
+                        onChange={(e) => setMaxtries(e.target.value)}
                       />
                     </div>
-                  )}
-                  {menuselectedOption === "PROMPT" && (
-                    <div>
-                      <div className="Texttosay">Audio File</div>
-                      <div className="Texttosay">Initial Audio File</div>
-                      <input
-                        className="AudioUploadInput"
-                        type="file"
-                        accept=".mp3,.wav"
-                        onChange={(e) => {
-                          const file = e.target.files[0];
-                          setMenuAudioFile(file);
-                          console.log("Selected audio file:", file);
-                        }}
-                      />
-                      <div className="Texttosay">NoInput Audio File</div>
-                      <input
-                        className="AudioUploadInput"
-                        type="file"
-                        accept=".mp3,.wav"
-                        onChange={(e) => {
-                          const file = e.target.files[0];
-                          setMenuAudioFile(file);
-                          console.log("Selected audio file:", file);
-                        }}
-                      />
-                      <div className="Texttosay">NoMatch Audio File</div>
-                      <input
-                        className="AudioUploadInput"
-                        type="file"
-                        accept=".mp3,.wav"
-                        onChange={(e) => {
-                          const file = e.target.files[0];
-                          setMenuAudioFile(file);
-                          console.log("Selected audio file:", file);
-                        }}
-                      />
-                    </div>
-                  )}
-                  <div className="Texttosay">MENU OPTIONS</div>
-                  <Dropdown
-                    className="ChannelDropdown"
-                    options={numbers}
-                    placeholder="Select an option"
-                    onChange={(e) => setMenuOption(e.value)}
-                  />
-                  <div className="Texttosay">Maxtries</div>
-                  <input
-                    className="TexttosayInputbox"
-                    type="Number"
-                    min={0}
-                    name="myInput"
-                    placeholder="Enter the NoMatch TTS"
-                    onChange={(e) => setTextToSay(e.target.value)}
-                  />
-                </div>
-                {/* <div className="Texttosay">Channel</div>
+                    {/* <div className="Texttosay">Channel</div>
                       <Dropdown
                           className="ChannelDropdown"
                           options={options}
@@ -581,166 +740,228 @@ function ElementConfiguration({
                           placeholder="Select an option"
                           onChange={(e) => setChannel(e.value)}
                       /> */}
-              </>
-            )}
-            {Decision && (
-              <div>
-                <div className="Texttosay">SESSION KEY</div>
-                <input
-                  className="TexttosayInputbox"
-                  type="text"
-                  name="myInput"
-                  placeholder="Enter the Session key"
-                  onChange={(e) => Setsessionkey(e.target.value)}
-                />
-                <div className="Texttosay">Operation to perform</div>
-                <Dropdown
-                  className="ChannelDropdown"
-                  options={DecisionOptions}
-                  placeholder="Select an option"
-                  onChange={(e) => Setoperation(e.value)}
-                />
-                <div className="Texttosay">Value</div>
-                <input
-                  className="TexttosayInputbox"
-                  type="text"
-                  name="myInput"
-                  placeholder="Enter the Value"
-                  onChange={(e) => Setsessionvalue(e.target.value)}
-                />
+                  </>
+                )}
+                {Decision && (
+                  <div>
+                    <div className="Texttosay">SESSION KEY</div>
+                    <input
+                      className="TexttosayInputbox"
+                      type="text"
+                      name="myInput"
+                      value={sessionkey || ""}
+                      // value={nodeDetails[selectedNodeData.id]?.sessionkey}
+                      placeholder="Enter the Session key"
+                      onChange={(e) => Setsessionkey(e.target.value)}
+                    />
+                    <div className="Texttosay">Operation to perform</div>
+                    <Dropdown
+                      className="ChannelDropdown"
+                      options={DecisionOptions}
+                      placeholder="Select an option"
+                      value={operation || ""}
+                      // value={nodeDetails[selectedNodeData.id]?.operation}
+                      onChange={(e) => Setoperation(e.value)}
+                    />
+                    <div className="Texttosay">Value</div>
+                    <input
+                      className="TexttosayInputbox"
+                      type="text"
+                      name="myInput"
+                      // value={nodeDetails[selectedNodeData.id]?.sessionvalue}
+                      value={sessionvalue || ""}
+                      placeholder="Enter the Value"
+                      onChange={(e) => Setsessionvalue(e.target.value)}
+                    />
+                  </div>
+                )}
+                {appModifier && (
+                  <>
+                    <div>
+                      <div className="Texttosay">Session data to modify</div>
+                      <input
+                        className="TexttosayInputbox"
+                        type="text"
+                        // value={nodeDetails[selectedNodeData.id]?.sessiondata}
+                        value={sessiondata || ""}
+                        name="myInput"
+                        placeholder="Enter the session data"
+                        onChange={(e) => setSessionData(e.target.value)}
+                      />
+                      <div className="Texttosay">Operation to perform</div>
+                      <Dropdown
+                        className="ChannelDropdown"
+                        options={methods}
+                        value={method || ""}
+                        // value={nodeDetails[selectedNodeData.id].method}
+                        placeholder="Select an option"
+                        onChange={(e) => setMethod(e.value)}
+                      />
+                    </div>
+                    {(method === "slice" ||
+                      method === "substr" ||
+                      method === "replace") && (
+                        <>
+                          <div className="Texttosay">
+                            {method === "replace"
+                              ? "String to replace"
+                              : "Start Index"}
+                          </div>
+                          <input
+                            className="TexttosayInputbox"
+                            type={method === "replace" ? "text" : "number"}
+                            name="myInput"
+                            required
+                            value={startValue || ""}
+                            // value={nodeDetails[selectedNodeData.id]?.startValue}
+                            placeholder={
+                              method === "replace"
+                                ? "Enter String to Replace"
+                                : "Enter Start Index"
+                            }
+                            onChange={(e) => setStartValue(e.target.value)}
+                          />
+                          <div className="Texttosay">
+                            {method === "replace"
+                              ? "Replace String"
+                              : "End Index"}
+                          </div>
+                          <input
+                            className="TexttosayInputbox"
+                            type={method === "replace" ? "text" : "number"}
+                            name="myInput"
+                            value={endValue}
+                            // value={nodeDetails[selectedNodeData.id]?.endValue}
+                            placeholder={
+                              method === "replace"
+                                ? "String to Replace with"
+                                : "Enter End Index"
+                            }
+                            onChange={(e) => setEndValue(e.target.value)}
+                          />
+                        </>
+                      )}
+                    {method === "assign" && (
+                      <>
+                        {/* <div className="Texttosay">Enter the Value to assign</div> */}
+                        <input
+                          className="TexttosayInputbox"
+                          type="text"
+                          name="myInput"
+                          // value={nodeDetails[selectedNodeData.id]?.assign}
+                          value={assign || ""}
+                          placeholder={
+                            method === "assign"
+                              ? "Enter the value to assign"
+                              : ""
+                          }
+                          onChange={(e) => Setassign(e.target.value)}
+                        />
+                      </>
+                    )}
+                    {method === "concat" && (
+                      <>
+                        <input
+                          className="TexttosayInputbox"
+                          type="text"
+                          name="myInput"
+                          // value={nodeDetails[selectedNodeData.id]?.concat}
+                          value={concat || ""}
+                          placeholder={"Enter String to Concat"}
+                          onChange={(e) => setconcat(e.target.value)}
+                        />
+                      </>
+                    )}
+                  </>
+                )}
+                {selectedNodeData.data.type === "Webhook" && (
+                  <>
+                    <div className="Texttosay">URL</div>
+                    <input
+                      className="TexttosayInputbox"
+                      type="text"
+                      name="myInput"
+                      placeholder={"Enter the complete URL"}
+                      onChange={(e) => setURL(e.target.value)}
+                    />
+                    <div className="Texttosay">HTTP Method</div>
+                    <Dropdown
+                      className="ChannelDropdown"
+                      options={["GET", "POST"]}
+                      placeholder="Select a method"
+                      onChange={(e) => setHTTPMethod(e.value)}
+                    />
+                    {httpMethod === "POST" && (
+                      <>
+                        <div className="Texttosay">Request body</div>
+                        <input
+                          className="TexttosayInputbox"
+                          type="text"
+                          name="myInput"
+                          placeholder="Enter the request body"
+                          onChange={(e) => setRequest(e.target.value)}
+                        />
+                      </>
+                    )}
+                    <div className="Texttosay">Store Response</div>
+                    <input
+                      className="TexttosayInputbox"
+                      type="text"
+                      name="myInput"
+                      placeholder={"Enter the variable to store response"}
+                      onChange={(e) => setApiResponse(e.target.value)}
+                    />
+                  </>
+                )}
+                {selectedNodeData.data.type === "Exit" &&
+                  <>
+                    <Dropdown
+                      className="ChannelDropdown"
+                      options={pageEntryList}
+                      value={pageEntry}
+                      placeholder="Select the entry node"
+                      onChange={(e) => setPageEntry(e.value)}
+                    />
+                  </>
+                }
               </div>
-            )}
-            {appModifier && (
-              <>
-                <div>
-                  <div className="Texttosay">Session data to modify</div>
-                  <input
-                    className="TexttosayInputbox"
-                    type="text"
-                    name="myInput"
-                    placeholder="Enter the session data"
-                    onChange={(e) => setSessionData(e.target.value)}
-                  />
-                  <div className="Texttosay">Operation to perform</div>
-                  <Dropdown
-                    className="ChannelDropdown"
-                    options={methods}
-                    placeholder="Select an option"
-                    onChange={(e) => setMethod(e.value)}
-                  />
-                </div>
-                {(method === "slice" ||
-                  method === "substr" ||
-                  method === "replace") && (
-                    <>
-                      <div className="Texttosay">
-                        {method === "replace"
-                          ? "String to replace"
-                          : "Start Index"}
-                      </div>
-                      <input
-                        className="TexttosayInputbox"
-                        type={method === "replace" ? "text" : "number"}
-                        name="myInput"
-                        required
-                        placeholder={
-                          method === "replace"
-                            ? "Enter String to Replace"
-                            : "Enter Start Index"
-                        }
-                        onChange={(e) => setStartValue(e.target.value)}
-                      />
-                      <div className="Texttosay">
-                        {method === "replace" ? "Replace String" : "End Index"}
-                      </div>
-                      <input
-                        className="TexttosayInputbox"
-                        type={method === "replace" ? "text" : "number"}
-                        name="myInput"
-                        placeholder={
-                          method === "replace"
-                            ? "String to Replace with"
-                            : "Enter End Index"
-                        }
-                        onChange={(e) => setEndValue(e.target.value)}
-                      />
-                    </>
-                  )}
-                {method === "assign" && (
-                  <>
-                    {/* <div className="Texttosay">Enter the Value to assign</div> */}
-                    <input
-                      className="TexttosayInputbox"
-                      type="text"
-                      name="myInput"
-                      placeholder={
-                        method === "assign" ? "Enter the value to assign" : ""
-                      }
-                      onChange={(e) => Setassign(e.target.value)}
-                    />
-                  </>
-                )}
-                {method === "concat" && (
-                  <>
-                    <input
-                      className="TexttosayInputbox"
-                      type="text"
-                      name="myInput"
-                      placeholder={"Enter String to Concat"}
-                      onChange={(e) => setconcat(e.target.value)}
-                    />
-                  </>
-                )}
-              </>
-            )}
-            {selectedNodeData.data.type === 'Webhook' &&
-              (
-                <>
-                  <div className="Texttosay">URL</div>
-                  <input
-                    className="TexttosayInputbox"
-                    type="text"
-                    name="myInput"
-                    placeholder={"Enter the complete URL"}
-                    onChange={(e) => setURL(e.target.value)}
-                  />
-                  <div className="Texttosay">HTTP Method</div>
-                  <Dropdown
-                    className="ChannelDropdown"
-                    options={["GET", "POST"]}
-                    placeholder="Select a method"
-                    onChange={(e) => setHTTPMethod(e.value)}
-                  />
-                  <div className="Texttosay">Store Response</div>
-                  <input
-                    className="TexttosayInputbox"
-                    type="text"
-                    name="myInput"
-                    placeholder={"Enter the variable to store response"}
-                    onChange={(e) => setApiResponse(e.target.value)}
-                  />
-                </>
-              )
-
-            }
+            </div>
+            <div className={checked ? "btns" : "Revisedbtns "}>
+              <button className="savebtn" onClick={handleSave}>
+                Save
+              </button>
+              <button className="Closebtn" onClick={Handleclosepopup}>
+                Close
+              </button>
+            </div>
           </div>
-          <div className="btns">
-            <button className="savebtn" onClick={handleSave}>
-              Save
-            </button>
-            <button className="Closebtn" onClick={Handleclosepopup}>
-              Close
-            </button>
+        )}
+        <div className="minimapContainer">
+          <div className="Checkboxcontainer">
+            <div className="Checkboxminimap">
+              <Switch onChange={handleChanges} checked={checked} />
+            </div>
+            <div className="EnablelingText">
+              {checked ? (
+                <span className="EnablingMinimap">Disable Minimap</span>
+              ) : (
+                <span className="EnablingMinimap">Enable Minimap</span>
+              )}
+            </div>
           </div>
         </div>
-      )}
-      {/* <MiniMap
-        className="Minimap"
-        nodeColor={(node) => (node.type === "input" ? "#6ede87" : "#ff0072")}
-        nodeStrokeWidth={3}
-        zoomable
-        pannable
-      /> */}
+        {checked && (
+          <MiniMap
+            className="Minimap"
+            nodeColor={(node) =>
+              node.type === "input" ? "#6ede87" : "#ff0072"
+            }
+            nodeStrokeWidth={4}
+            zoomable
+            pannable
+          />
+        )}
+      </div>
     </>
   );
 }
